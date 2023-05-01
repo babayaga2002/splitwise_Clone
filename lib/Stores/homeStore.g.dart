@@ -135,6 +135,23 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  late final _$groupTilesAddExpenseListAtom =
+      Atom(name: '_HomeStore.groupTilesAddExpenseList', context: context);
+
+  @override
+  ObservableList<Widget> get groupTilesAddExpenseList {
+    _$groupTilesAddExpenseListAtom.reportRead();
+    return super.groupTilesAddExpenseList;
+  }
+
+  @override
+  set groupTilesAddExpenseList(ObservableList<Widget> value) {
+    _$groupTilesAddExpenseListAtom
+        .reportWrite(value, super.groupTilesAddExpenseList, () {
+      super.groupTilesAddExpenseList = value;
+    });
+  }
+
   late final _$friendsTilesListAtom =
       Atom(name: '_HomeStore.friendsTilesList', context: context);
 
@@ -240,6 +257,17 @@ mixin _$HomeStore on _HomeStore, Store {
   }
 
   @override
+  void getData(UserModel user) {
+    final _$actionInfo =
+        _$_HomeStoreActionController.startAction(name: '_HomeStore.getData');
+    try {
+      return super.getData(user);
+    } finally {
+      _$_HomeStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void getFriendsTiles() {
     final _$actionInfo = _$_HomeStoreActionController.startAction(
         name: '_HomeStore.getFriendsTiles');
@@ -260,6 +288,7 @@ owedString: ${owedString},
 groupOperation: ${groupOperation},
 friendOperation: ${friendOperation},
 groupTilesList: ${groupTilesList},
+groupTilesAddExpenseList: ${groupTilesAddExpenseList},
 friendsTilesList: ${friendsTilesList},
 friendsTilesActivityList: ${friendsTilesActivityList},
 friendsNameToUid: ${friendsNameToUid},

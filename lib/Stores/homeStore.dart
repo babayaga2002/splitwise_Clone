@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
@@ -19,6 +20,11 @@ class HomeStore = _HomeStore with _$HomeStore;
 
 abstract class _HomeStore with Store {
   _HomeStore() {
+    reaction((_) {
+      return loadOperation.value;
+    }, (_) {
+      getData(loadOperation.value!);
+    });
     autorun((p0) {
       getUserData();
       getUid();
@@ -78,28 +84,32 @@ abstract class _HomeStore with Store {
 
   @action
   Future<void> getUserData() async {
-    loadOperation = APIService.getUserData().asObservable().whenComplete(() {
-      if (loadOperation != null &&
-          loadOperation.value != null &&
-          loadOperation.value!.groups != null) {
-        groupOperation = APIService.getGroupData(loadOperation.value!.groups!)
-            .asObservable();
-        print(groupOperation.error);
-        print(groupOperation.value);
-      }
-      if (loadOperation != null &&
-          loadOperation.value != null &&
-          loadOperation.value!.friends != null) {
-        friendOperation =
-            APIService.getFriendsData(loadOperation.value!.friends!)
-                .asObservable();
-        print(friendOperation.error);
-        print(friendOperation.value);
-        friendsNameToUid = ObservableMap.of(friendOperation.value!);
-        print(friendsNameToUid);
-        getFriendsTiles();
-      }
-    });
+    loadOperation = APIService.getUserData().asObservable();
+  }
+
+  @action
+  void getData(UserModel user) {
+    print(user.groups);
+    if (loadOperation != null &&
+        loadOperation.value != null &&
+        loadOperation.value!.groups != null) {
+      print(loadOperation.value!.groups!);
+      groupOperation =
+          APIService.getGroupData(loadOperation.value!.groups!).asObservable();
+      print(groupOperation.error);
+      print(groupOperation.value);
+    }
+    if (loadOperation != null &&
+        loadOperation.value != null &&
+        loadOperation.value!.friends != null) {
+      friendOperation = APIService.getFriendsData(loadOperation.value!.friends!)
+          .asObservable();
+      print(friendOperation.error);
+      print(friendOperation.value);
+      friendsNameToUid = ObservableMap.of(friendOperation.value!);
+      print(friendsNameToUid);
+      getFriendsTiles();
+    }
   }
 
   @action

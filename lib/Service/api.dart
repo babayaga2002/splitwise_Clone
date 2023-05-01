@@ -10,13 +10,19 @@ class APIService {
   static const String host = "https://pll-splitwise-app.azurewebsites.net";
   static const String _addNewUser = "$host/users/";
   static const String _addNewGroup = "$host/groups/";
-
+  static const Map<String,String> headers={
+    "Content-Type": "application/json"
+  };
   static Future<bool> addNewUser(String name) async {
+    Map<String,String> headers={
+      "Content-Type": "application/json"
+    };
     var res = await http.post(
       Uri.parse(_addNewUser),
       body: jsonEncode({
         "name": name,
       }),
+      headers: headers,
     );
     var body = jsonDecode(res.body);
     if (res.statusCode == 201) {
@@ -37,6 +43,7 @@ class APIService {
       body: jsonEncode({
         "friendId": uidB,
       }),
+      headers: headers,
     );
     if (res.statusCode == 200 || res.statusCode == 400) {
       print(res.body);
@@ -53,6 +60,7 @@ class APIService {
       body: jsonEncode({
         "memberId": uid,
       }),
+      headers: headers,
     );
     if (res.statusCode == 200 || res.statusCode == 400) {
       return true;
@@ -82,7 +90,10 @@ class APIService {
     var body = jsonDecode(response.body);
     if (status == 200) {
       print(body);
-      return UserModel.fromJson(body);
+      UserModel user=UserModel.fromJson(body);
+      // print(user.groups);
+      return user;
+      // return UserModel.fromJson(body);
     } else {
       print("Data could not be fetched : User Data");
       throw Exception("Data could not be fetched : User Data");
@@ -94,8 +105,9 @@ class APIService {
         await http.get(Uri.parse(_addNewUser + uid + "/name"));
     var status = response.statusCode;
     var body = jsonDecode(response.body);
+    print(body);
     if (status == 200) {
-      return body;
+      return body["name"];
     } else {
       print("Error");
       throw Error();
@@ -114,6 +126,7 @@ class APIService {
         "title": name,
         "userId": uid,
       }),
+      headers: headers,
     );
     if (res.statusCode == 201) {
       return true;
@@ -134,6 +147,7 @@ class APIService {
         "split_type": "paid_equally",
         "expense": expense,
       }),
+      headers: headers,
     );
     if (res.statusCode == 200) {
       return true;
@@ -155,6 +169,7 @@ class APIService {
         "percent_split": owe,
         "expense": expense,
       }),
+      headers: headers,
     );
     if (res.statusCode == 201) {
       return true;
@@ -176,6 +191,7 @@ class APIService {
         "manually_split": owe,
         "expense": expense,
       }),
+      headers: headers,
     );
     if (res.statusCode == 201) {
       return true;
