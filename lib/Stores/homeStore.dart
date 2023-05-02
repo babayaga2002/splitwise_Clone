@@ -21,6 +21,11 @@ class HomeStore = _HomeStore with _$HomeStore;
 abstract class _HomeStore with Store {
   _HomeStore() {
     reaction((_) {
+      return counter.value;
+    }, (_) {
+      getUserData();
+    });
+    reaction((_) {
       return loadOperation.value;
     }, (_) {
       getData(loadOperation.value!);
@@ -38,6 +43,14 @@ abstract class _HomeStore with Store {
   }
   @observable
   Observable<String> uid = Observable("");
+
+  @observable
+  Observable<int> counter = Observable(0);
+
+  @action
+  void reset() {
+    counter = Observable(counter.value + 1);
+  }
 
   @observable
   int indexAddExpense = 0;
@@ -157,7 +170,7 @@ abstract class _HomeStore with Store {
         loadOperation.value != null &&
         loadOperation.value!.totalSpendings != null) {
       if (loadOperation.value!.totalSpendings! > 0) {
-        text = "Overall, you are owed " +
+        text = "Total Spending for May:" +
             loadOperation.value!.totalSpendings.toString();
       } else if (loadOperation.value!.totalSpendings == 0) {
         text = "You are all settled-up";
@@ -231,13 +244,12 @@ abstract class _HomeStore with Store {
     if (expenses.isNotEmpty) {
       for (var element in expenses) {
         DateTime parseDate =
-        new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
-        num x =element.owe?[uid.value];
-        if(x<0){
-          num amount=element.expense!+x;
+            new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
+        num x = element.owe?[uid.value] ?? 0;
+        if (x < 0) {
+          num amount = element.expense! + x;
           a.add(ActivityTile(
-            title:
-            "You added ${element.title!}",
+            title: "You added ${element.title!}",
             text1: "You get back ${amount}",
             text2: parseDate.day.toString() +
                 "/" +
@@ -248,12 +260,12 @@ abstract class _HomeStore with Store {
                 parseDate.minute.toString(),
             isDeleted: false,
             color: Colors.green.shade400,
+            text3: categories[element.category ?? 3]!,
           ));
-        }
-        else{
+        } else {
           a.add(ActivityTile(
             title:
-            "${GroupMemberName.nonObservableInner[element.paidBy]} added ${element.title!}",
+                "${GroupMemberName.nonObservableInner[element.paidBy]} added ${element.title!}",
             text1: "You get back ${-x}",
             text2: parseDate.day.toString() +
                 "/" +
@@ -264,6 +276,7 @@ abstract class _HomeStore with Store {
                 parseDate.minute.toString(),
             isDeleted: false,
             color: Colors.orange.shade400,
+            text3: categories[element.category ?? 3]!,
           ));
         }
       }
@@ -323,5 +336,12 @@ abstract class _HomeStore with Store {
     10: 'October',
     11: 'November',
     12: 'December',
+  };
+
+  Map<int, String> categories = {
+    0: "Trip",
+    1: "Food",
+    2: "Travel",
+    3: "Other",
   };
 }

@@ -54,6 +54,21 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  late final _$counterAtom = Atom(name: '_HomeStore.counter', context: context);
+
+  @override
+  Observable<int> get counter {
+    _$counterAtom.reportRead();
+    return super.counter;
+  }
+
+  @override
+  set counter(Observable<int> value) {
+    _$counterAtom.reportWrite(value, super.counter, () {
+      super.counter = value;
+    });
+  }
+
   late final _$indexAddExpenseAtom =
       Atom(name: '_HomeStore.indexAddExpense', context: context);
 
@@ -253,6 +268,17 @@ mixin _$HomeStore on _HomeStore, Store {
       ActionController(name: '_HomeStore', context: context);
 
   @override
+  void reset() {
+    final _$actionInfo =
+        _$_HomeStoreActionController.startAction(name: '_HomeStore.reset');
+    try {
+      return super.reset();
+    } finally {
+      _$_HomeStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setIndex(int i) {
     final _$actionInfo =
         _$_HomeStoreActionController.startAction(name: '_HomeStore.setIndex');
@@ -278,6 +304,7 @@ mixin _$HomeStore on _HomeStore, Store {
   String toString() {
     return '''
 uid: ${uid},
+counter: ${counter},
 indexAddExpense: ${indexAddExpense},
 loadOperation: ${loadOperation},
 groupOperation: ${groupOperation},

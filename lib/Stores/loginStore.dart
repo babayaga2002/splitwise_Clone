@@ -25,17 +25,21 @@ abstract class _LoginStore with Store {
   @observable
   Observable<String> image = Observable("");
 
+  @observable
+  Observable<String> uid = Observable("");
+
   @action
   Future<void> getUserData() async {
     SharedPreferences instance = await SharedPreferences.getInstance();
     auth = Observable(instance.getString("auth") ?? "");
     name = Observable(instance.getString("name") ?? "");
+    uid = Observable(instance.getString("uid") ?? "");
     image = Observable(instance.getString("image") ?? "");
     phoneNumber = Observable(instance.getString("phone") ?? "");
   }
 
   Future<void> saveToServer() async {
-    FirebaseFirestore.instance.collection('users').doc(auth.value).set({
+    FirebaseFirestore.instance.collection('users').doc(uid.value).set({
       'name': name.value,
       'image': image.value,
       'phone' : phoneNumber.value,

@@ -70,6 +70,21 @@ mixin _$LoginStore on _LoginStore, Store {
     });
   }
 
+  late final _$uidAtom = Atom(name: '_LoginStore.uid', context: context);
+
+  @override
+  Observable<String> get uid {
+    _$uidAtom.reportRead();
+    return super.uid;
+  }
+
+  @override
+  set uid(Observable<String> value) {
+    _$uidAtom.reportWrite(value, super.uid, () {
+      super.uid = value;
+    });
+  }
+
   late final _$getUserDataAsyncAction =
       AsyncAction('_LoginStore.getUserData', context: context);
 
@@ -92,7 +107,8 @@ mixin _$LoginStore on _LoginStore, Store {
 name: ${name},
 phoneNumber: ${phoneNumber},
 auth: ${auth},
-image: ${image}
+image: ${image},
+uid: ${uid}
     ''';
   }
 }

@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   String authToken = '';
   String userID = '';
-  bool firstcall = true ;
+  bool firstcall = true;
 
   startTime() async {
     var _duration = new Duration(seconds: 3);
@@ -61,15 +61,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double height=MediaQuery.of(context).size.height;
-    double width=MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("",width: 0.2*width,height: 0.2*height,),
+            Image.asset(
+              'images/logo.png',
+              width: 0.2 * width,
+              height: 0.2 * height,
+            ),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Text(

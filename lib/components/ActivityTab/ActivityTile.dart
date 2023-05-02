@@ -5,6 +5,7 @@ class ActivityTile extends StatelessWidget {
   String title = "";
   String text1 = "";
   String text2 = "";
+  String text3="";
   Color color = Colors.green.shade400;
   bool isDeleted = false;
   ActivityTile(
@@ -13,6 +14,7 @@ class ActivityTile extends StatelessWidget {
       required this.text1,
       required this.text2,
        required this.color,
+        required this.text3,
       required this.isDeleted})
       : super(key: key);
 
@@ -38,6 +40,7 @@ class ActivityTile extends StatelessWidget {
             text1,
             style: TextStyle(color: color,fontSize: 16,decoration: (isDeleted) ? TextDecoration.lineThrough : null),
           ),
+          Text(text3,style: TextStyle(color: Colors.grey.shade100,fontSize: 12),),
           Text(text2,style: TextStyle(color: Colors.grey.shade400,fontSize: 12),),
         ],
       ),

@@ -17,7 +17,6 @@ class OnboardingScreens extends StatefulWidget {
 class _OnboardingScreensState extends State<OnboardingScreens> {
   late PageController _onboarding;
   int currentIndex = 0;
-  
 
   @override
   void initState() {
@@ -53,7 +52,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
     var size = MediaQuery.of(context).size;
     return ScreenUtilInit(
       designSize: Size(375, 812),
-      builder:(BuildContext context,child)=> Scaffold(
+      builder: (BuildContext context, child) => Scaffold(
         body: Container(
           child: Stack(
             children: [
@@ -69,12 +68,12 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset('UIAssets/accept a job.png'),
+                            Image.asset('images/logo.png'),
                             SizedBox(
                               height: 94.h,
                             ),
                             Text(
-                              'Accept a Job',
+                              'Accept your Money',
                               style: TextStyle(
                                 fontFamily: 'SF UI Display',
                                 fontWeight: FontWeight.bold,
@@ -89,7 +88,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
                               width: 300.w,
                               height: 60.h,
                               child: Text(
-                                "Accept the nearest patient's request and be someone's hero.",
+                                "Manage Money Like a Pro",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: 'SF UI Display',
@@ -133,7 +132,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Image.asset(
-                              'UIAssets/tracking realtime.png',
+                              'images/logo.png',
                               scale: 1.1,
                             ),
                             SizedBox(
@@ -156,7 +155,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
                               width: 300.w,
                               height: 60.h,
                               child: Text(
-                                "Track the patient's location using GPS to avoid hassle and reach in time.",
+                                "Track your expenses and payments in time.",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: 'SF UI Display',
@@ -200,14 +199,14 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Image.asset(
-                              'UIAssets/earn money.png',
+                              'images/logo.png',
                               scale: 1.1,
                             ),
                             SizedBox(
                               height: 90.h,
                             ),
                             Text(
-                              'Earn Money',
+                              'Money Matters',
                               style: TextStyle(
                                 fontFamily: 'SF UI Display',
                                 letterSpacing: 1,
@@ -223,7 +222,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
                               width: 300.w,
                               height: 60.h,
                               child: Text(
-                                "Get paid for every valuable life you save.",
+                                "Get paid for every payment you make",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: 'SF UI Display',
