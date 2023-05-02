@@ -6,7 +6,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:splitwise/Stores/loginStore.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -16,6 +15,14 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+
+  late LoginStore loginStore;
+
+  @override
+  void initState(){
+    super.initState();
+    loginStore=context.read<LoginStore>();
+  }
   @override
   XFile? _image;
   _imgFromCamera() async {
@@ -23,6 +30,8 @@ class _EditProfileState extends State<EditProfile> {
         await _picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     setState(() {
       _image = image;
+      if (_image != null)
+        loginStore.saveImageToPrefernces(_image!.path);
     });
   }
 
@@ -31,6 +40,8 @@ class _EditProfileState extends State<EditProfile> {
         await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
     setState(() {
       _image = image;
+      if (_image != null)
+        loginStore.saveImageToPrefernces(image!.path);
     });
   }
 
@@ -90,7 +101,6 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return Observer(builder: (context) {
-      var loginStore = context.read<LoginStore>();
       return SafeArea(
         child: Scaffold(
           body: SingleChildScrollView(
@@ -136,10 +146,10 @@ class _EditProfileState extends State<EditProfile> {
                             children: [
                               CircleAvatar(
                                 backgroundImage: (_image == null &&
-                                        loginStore.userData["image"] == null)
+                                        loginStore.image.value == "")
                                     ? null
                                     : FileImage((_image!=null)?File(_image!.path):
-                                        File(loginStore.userData["image"]!),
+                                        File(loginStore.image.value),
                                       ),
                               ),
                               Positioned(
@@ -149,13 +159,8 @@ class _EditProfileState extends State<EditProfile> {
                                     constraints: BoxConstraints(
                                       minHeight: 45,
                                     ),
-                                    onPressed: () async {
+                                    onPressed: () {
                                       _showPicker(context);
-                                      final SharedPreferences instance =
-                                          await SharedPreferences.getInstance();
-                                      if (_image != null)
-                                        loginStore.saveImagePathToPreferences(
-                                            instance, _image!.path);
                                     },
                                     elevation: 2.0,
                                     fillColor: Color(0xff3D83C3),
@@ -179,51 +184,7 @@ class _EditProfileState extends State<EditProfile> {
                     style: TextStyle(color: Colors.white54, fontSize: 15),
                   ),
                   subtitle: Text(
-                    "${loginStore.userData["name"]}",
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                  onTap: () {},
-                ),
-                ListTile(
-                  title: const Text(
-                    'Name',
-                    style: TextStyle(color: Colors.white54, fontSize: 15),
-                  ),
-                  subtitle: Text(
-                    "${loginStore.userData["name"]}",
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                  onTap: () {},
-                ),
-                ListTile(
-                  title: const Text(
-                    'Name',
-                    style: TextStyle(color: Colors.white54, fontSize: 15),
-                  ),
-                  subtitle: Text(
-                    "${loginStore.userData["name"]}",
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                  onTap: () {},
-                ),
-                ListTile(
-                  title: const Text(
-                    'Name',
-                    style: TextStyle(color: Colors.white54, fontSize: 15),
-                  ),
-                  subtitle: Text(
-                    "${loginStore.userData["name"]}",
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                  onTap: () {},
-                ),
-                ListTile(
-                  title: const Text(
-                    'Name',
-                    style: TextStyle(color: Colors.white54, fontSize: 15),
-                  ),
-                  subtitle: Text(
-                    "${loginStore.userData["name"]}",
+                    "${loginStore.name}",
                     style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                   onTap: () {},

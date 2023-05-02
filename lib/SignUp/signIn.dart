@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:splitwise/Service/auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:splitwise/SignUp/otpVerification.dart';
+import 'package:splitwise/Stores/loginStore.dart';
 
 
 class SignIn extends StatefulWidget {
@@ -18,6 +20,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    var loginStore=context.read<LoginStore>();
     return ScreenUtilInit(
       builder: (context,child) => GestureDetector(
         onTap: () {
@@ -205,6 +208,7 @@ class _SignInState extends State<SignIn> {
                                       var pnumber=_phonenumber.trim();
                                       await verifyPhoneNumber(
                                           "+91 ${pnumber}", context, setData);
+                                      loginStore.savePhoneToPrefernces("+91 ${pnumber}");
                                     }
                                   },
                                 );

@@ -24,7 +24,7 @@ class _ActivityTabState extends State<ActivityTab> {
       appBar: AppBar(
         backgroundColor: Color(0xff232932),
         elevation: 1,
-        title: Text("Activity"),
+        title: Text("Activity",style: TextStyle(color: Colors.white,fontSize: 25),),
       ),
       body: NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
@@ -50,7 +50,7 @@ class _ActivityTabState extends State<ActivityTab> {
                   children: [
                     (homeStore.friendOperation.error != null)
                         ? Center(
-                            child: Text("Error Loading the Groups"),
+                            child: Text("Error Loading the Activity"),
                           )
                         : (homeStore.friendOperation.value == null &&
                                 homeStore.activityTiles == null)

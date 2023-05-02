@@ -13,9 +13,12 @@ class FriendsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Image.asset("path/${random(0, 5)}",width: 30,height: 30,),
-      title: Text(friendName),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListTile(
+        leading: Image.asset("path/${random(0, 5)}",width: 30,height: 30,),
+        title: Text(friendName,style: TextStyle(color: Colors.grey,fontSize: 20),),
+      ),
     );
   }
 }

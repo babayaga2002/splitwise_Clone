@@ -90,7 +90,7 @@ class _AddNewFriendPageState extends State<AddNewFriendPage> {
                         left: 25, right: 25, top: 40, bottom: 15),
                     color: Colors.white,
                     child: (homeStore.uid.value != " " &&
-                            loginStore.userData["name"] != "")
+                            loginStore.name.value != "")
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -105,7 +105,7 @@ class _AddNewFriendPageState extends State<AddNewFriendPage> {
                                   size: Size(80, 80),
                                 ),
                               ),
-                              Text(loginStore.userData["name"] ?? ""),
+                              Text(loginStore.name.value),
                             ],
                           )
                         : Text("Please SignIn"),

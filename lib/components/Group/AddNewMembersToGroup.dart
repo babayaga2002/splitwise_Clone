@@ -27,7 +27,6 @@ class _AddNewMembersToGroupState extends State<AddNewMembersToGroup> {
   int selected = 0;
   Widget build(BuildContext context) {
     var homeStore = context.read<HomeStore>();
-    var loginStore = context.read<LoginStore>();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -95,7 +94,7 @@ class _AddNewMembersToGroupState extends State<AddNewMembersToGroup> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   QrImage(
-                    data: homeStore.uid.value,
+                    data: widget.model!.sId!,
                     version: QrVersions.auto,
                     size: 320,
                     gapless: false,
@@ -105,7 +104,7 @@ class _AddNewMembersToGroupState extends State<AddNewMembersToGroup> {
                       size: Size(80, 80),
                     ),
                   ),
-                  Text(widget.model!.sId!),
+                  Text(widget.model!.title!),
                 ],
               )
             )

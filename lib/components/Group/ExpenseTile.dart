@@ -16,22 +16,28 @@ class ExpenseTile extends StatefulWidget {
 class _ExpenseTileState extends State<ExpenseTile> {
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(widget.month),
-          Text(widget.date),
-        ],
-      ),
-      title: Text(widget.title),
-      subtitle: Text(widget.paidBy+" paid "+widget.amountPaid),
-      trailing: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          (widget.amount>0)?Text("You lent"):Text("You Borrowed"),
-          Text(widget.amount.toString()),
-        ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListTile(
+        leading: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(widget.month,style: TextStyle(color: Colors.grey.shade400,fontSize: 16),),
+            SizedBox(height: 4,),
+            Text(widget.date,style: TextStyle(color: Colors.grey.shade400,fontSize: 18),),
+          ],
+        ),
+        title: Text(widget.title,style: TextStyle(color: Colors.grey.shade300,fontSize: 20)),
+        subtitle: Text(widget.paidBy+" paid "+widget.amountPaid,style: TextStyle(color: Colors.grey.shade400,fontSize: 13),),
+        trailing: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            (widget.amount<0)?Text("You lent",style: TextStyle(color: Colors.grey.shade400,fontSize: 13),):Text("You Borrowed",style: TextStyle(color: Colors.grey.shade400,fontSize: 16),),
+            SizedBox(height: 4,),
+            Text(widget.amount.toString(),style: TextStyle(color: Colors.grey.shade400,fontSize: 18),),
+          ],
+        ),
       ),
     );
   }

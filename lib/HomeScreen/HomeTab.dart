@@ -54,86 +54,92 @@ class _HomeTabState extends State<HomeTab> {
             },
             child: (homeStore.loadOperation == null)
                 ? ListShimmer(
-              count: 2,
-            )
+                    count: 2,
+                  )
                 : SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Text(
-                          homeStore.titleString,
-                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Text(
+                                homeStore.titleString,
+                                style:
+                                    TextStyle(color: Colors.white, fontSize: 20),
+                              ),
+                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(15.0),
+                            //   child: GestureDetector(
+                            //     onTap: () {},
+                            //     child: Icon(
+                            //       Icons.filter_drama,
+                            //       color: Colors.grey,
+                            //       size: 40,
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
                         ),
-                      ),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(15.0),
-                      //   child: GestureDetector(
-                      //     onTap: () {},
-                      //     child: Icon(
-                      //       Icons.filter_drama,
-                      //       color: Colors.grey,
-                      //       size: 40,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                  // ...homeStore.groupTiles,
-                  (homeStore.groupOperation.error != null)
-                      ? Center(
-                    child: Text("Error Loading the Groups"),
-                  )
-                      : (homeStore.groupOperation.value == null &&
-                      homeStore.groupTiles == null)
-                      ? ListShimmer(
-                    count: 4,
-                  )
-                      : (homeStore.groupTiles.isEmpty)
-                      ? Center(child: Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: Text("No Groups to Display",style: TextStyle(color: Colors.grey,fontSize: 20),),
-                  ))
-                      : SizedBox(),
-                  ...homeStore.groupTiles,
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, AddNewGroupPage.id);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.green,
-                          width: 2,
+                        // ...homeStore.groupTiles,
+                        (homeStore.groupOperation.error != null)
+                            ? Center(
+                                child: Text("Error Loading the Groups"),
+                              )
+                            : (homeStore.groupOperation.value == null &&
+                                    homeStore.groupTiles == null)
+                                ? ListShimmer(
+                                    count: 4,
+                                  )
+                                : (homeStore.groupTiles.isEmpty)
+                                    ? Center(
+                                        child: Padding(
+                                        padding: const EdgeInsets.all(40.0),
+                                        child: Text(
+                                          "No Groups to Display",
+                                          style: TextStyle(
+                                              color: Colors.grey, fontSize: 20),
+                                        ),
+                                      ))
+                                    : SizedBox(),
+                        ...homeStore.groupTiles,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, AddNewGroupPage.id);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.green,
+                                width: 2,
+                              ),
+                            ),
+                            width: 250,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(
+                                  Icons.group_add,
+                                  color: Colors.green,
+                                ),
+                                Text(
+                                  "Start a new group",
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                      width: 250,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Icon(
-                            Icons.group_add,
-                            color: Colors.green,
-                          ),
-                          Text(
-                            "Start a new group",
-                            style: TextStyle(color: Colors.green),
-                          ),
-                        ],
-                      ),
+                        SizedBox(
+                          height: 250,
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    height: 250,
-                  ),
-                ],
-              ),
-            ),
           ),
           floatingActionButton: float(isScrolled, context),
         );

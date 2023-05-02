@@ -45,9 +45,6 @@ abstract class _HomeStore with Store {
   ObservableFuture<UserModel?> loadOperation = ObservableFuture.value(null);
 
   @observable
-  Observable<String> owedString = Observable("");
-
-  @observable
   ObservableFuture<List<GroupModel?>> groupOperation =
       ObservableFuture.value([]);
 
@@ -102,24 +99,52 @@ abstract class _HomeStore with Store {
     if (loadOperation != null &&
         loadOperation.value != null &&
         loadOperation.value!.friends != null) {
-      friendOperation = APIService.getFriendsData(loadOperation.value!.friends!)
-          .asObservable();
-      print(friendOperation.error);
-      print(friendOperation.value);
-      friendsNameToUid = ObservableMap.of(friendOperation.value!);
+      friendOperation =
+          APIService.getFriendsData(loadOperation.value!.friends ?? [])
+              .asObservable();
+      friendsNameToUid = ObservableMap.of(friendOperation.value ?? {});
       print(friendsNameToUid);
-      getFriendsTiles();
     }
   }
 
-  @action
-  void getFriendsTiles() {
+  @computed
+  List<Widget> get friendsTiles {
     List<Widget> a = [];
     if (loadOperation == null) getUserData();
-    friendsNameToUid.forEach((key, value) {
-      a.add(FriendsTile(friendName: value, friendid: key));
-    });
-    friendsTilesActivityList = ObservableList<Widget>.of(a);
+    if (friendOperation == null) {
+      friendOperation =
+          APIService.getFriendsData(loadOperation.value!.friends ?? [])
+              .asObservable();
+      friendsNameToUid = ObservableMap.of(friendOperation.value ?? {});
+    } else {
+      if (friendOperation.value != null) {
+        friendOperation.value!.forEach((key, value) {
+          a.add(FriendsTile(friendName: value, friendid: key));
+        });
+        friendsTilesActivityList = ObservableList<Widget>.of(a);
+      }
+    }
+    return a;
+  }
+
+  @computed
+  List<Widget> get friendsTilesAddGroupPage {
+    List<Widget> a = [];
+    if (loadOperation == null) getUserData();
+    if (friendOperation == null) {
+      friendOperation =
+          APIService.getFriendsData(loadOperation.value!.friends ?? [])
+              .asObservable();
+      friendsNameToUid = ObservableMap.of(friendOperation.value ?? {});
+    } else {
+      if (friendOperation.value != null) {
+        friendOperation.value!.forEach((key, value) {
+          a.add(FriendsTile(friendName: value, friendid: key));
+        });
+        friendsTilesActivityList = ObservableList<Widget>.of(a);
+      }
+    }
+    return a;
   }
 
   @computed
@@ -132,17 +157,16 @@ abstract class _HomeStore with Store {
       if (loadOperation.value!.totalSpendings! > 0) {
         text = "Overall, you are owed " +
             loadOperation.value!.totalSpendings.toString();
-      } else if (loadOperation == 0) {
+      } else if (loadOperation.value!.totalSpendings == 0) {
         text = "You are all settled-up";
       } else
         text = "Overall, you owe " +
             (-loadOperation.value!.totalSpendings!).toString();
     }
-    owedString = Observable<String>(text);
     return text;
   }
 
-  String calculate(Map<String, Map<String, int>> map) {
+  String calculate(Map<String,dynamic> map) {
     int sum = 0;
     if (uid == "")
       return "";
@@ -173,7 +197,7 @@ abstract class _HomeStore with Store {
         groupOperation.value!.forEach((element) {
           a.add(GroupTile(
             title: element!.title!,
-            text1: calculate(element!.memberOwes!),
+            text1: calculate(element!.memberOwes ?? {}),
             model: element,
           ));
           getActivityDataPerGroup(element.sId!);
@@ -188,27 +212,33 @@ abstract class _HomeStore with Store {
   getActivityDataPerGroup(String groupId) async {
     List<ExpenseModel> expenses = await APIService.getGroupExpenses(groupId);
     List<Widget> a = [];
-    expenses.forEach((element) {
-      DateTime parseDate =
-          new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
-      element.owe!.forEach((key, value) {
-        a.add(ActivityTile(
-          title: "You added ${element.title!}",
-          text1: (element.owe![uid]! > 0)
-              ? "You get back ${-element.owe![uid]!}"
-              : "You owe ${element.owe![uid]!}",
-          text2: parseDate.day.toString() +
-              "/" +
-              parseDate.month.toString() +
-              " " +
-              parseDate.hour.toString() +
-              ":" +
-              parseDate.minute.toString(),
-          isDeleted: false,
-        ));
-      });
-    });
-    activityTiles.addAll(ObservableList.of(a));
+    if (expenses.isNotEmpty) {
+      for (var element in expenses) {
+        print(element.owe.toString());
+        DateTime parseDate =
+            new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
+        element.owe?.forEach((key, value) {
+          print(key + " : " + value.toString());
+          a.add(ActivityTile(
+            title: "You added ${element.title!}",
+            text1: (key == uid.value && value > 0)
+                ? "You get back ${-element.owe?[uid.value]!}"
+                : "You owe ${element.owe?[uid.value]!}",
+            text2: parseDate.day.toString() +
+                "/" +
+                parseDate.month.toString() +
+                " " +
+                parseDate.hour.toString() +
+                ":" +
+                parseDate.minute.toString(),
+            isDeleted: false,
+            color: (key == uid.value && value > 0)?Colors.green.shade400:Colors.orange.shade400,
+          ));
+        });
+      }
+      if (a.isEmpty) a.add(Text("All Settled Group Expenses with Members"));
+      activityTiles.addAll(ObservableList.of(a));
+    }
   }
 
   Map<int, String> monthsMap = {

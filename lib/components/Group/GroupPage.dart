@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:splitwise/Models/ExpenseModel.dart';
@@ -12,7 +13,9 @@ import '../Shimmer.dart';
 
 class GroupPage extends StatefulWidget {
   GroupModel model;
-  GroupPage({Key? key, required this.model}) : super(key: key);
+  int img;
+  GroupPage({Key? key, required this.model, required this.img})
+      : super(key: key);
 
   @override
   State<GroupPage> createState() => _GroupPageState();
@@ -35,13 +38,16 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   List<Widget> expenseTiles = [];
-  List<String> data = [];
+  List<Widget> data = [];
   Map<String, int> finalMap = {};
   void calculate() {
-    Map<String, int> mp = widget.model.memberOwes![homeStore.uid]!;
+    setState(() {
+      data=[];
+    });
+    Map<String, int>? mp = widget.model.memberOwes?[homeStore.uid.value] ?? {};
     Map<String, String> nameToUid = homeStore.friendsNameToUid;
-    mp.forEach((key, value) {
-      if (nameToUid[key] != ""){
+    mp?.forEach((key, value) {
+      if (nameToUid[key] != null && nameToUid[key] != "") {
         setState(() {
           finalMap[nameToUid[key]!] = value;
         });
@@ -50,19 +56,59 @@ class _GroupPageState extends State<GroupPage> {
 
     finalMap.forEach((key, value) {
       if (value > 0) {
-        data.add(key + " owes you " + value.toString());
+        setState(() {
+          data.add(Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 40.0, top: 5, bottom: 5),
+                child: Text(key + " owes you " + value.toString()),
+              ),
+            ],
+          ));
+        });
       } else if (value < 0) {
-        data.add("You owe " + key + " " + (-value).toString());
+        setState(() {
+          data.add(Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 40.0, top: 5, bottom: 5),
+                child: Text("You owe " + key + " " + (-value).toString()),
+              ),
+            ],
+          ));
+        });
       }
-      if (data.isEmpty) data.add("Settled-up");
     });
+    if (data.isEmpty) {
+      setState(() {
+        data.add(Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 40.0, top: 5, bottom: 5),
+              child: Text(
+                "Settled-up",
+                style: TextStyle(color: Colors.grey.shade300, fontSize: 16),
+              ),
+            ),
+          ],
+        ));
+      });
+    }
+    print(finalMap.toString() + "dsnbcb,d");
   }
 
   @override
   Widget build(BuildContext context) {
+    calculate();
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
           child: Icon(
             Icons.arrow_back,
             color: Colors.white,
@@ -74,21 +120,74 @@ class _GroupPageState extends State<GroupPage> {
         child: Padding(
           padding: const EdgeInsets.only(left: 15.0),
           child: Column(
+            // crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0, left: 30, bottom: 8),
-                child: Text(widget.model.title!),
+              Row(
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 8.0, left: 25, bottom: 10),
+                    child: Image.asset(
+                      "path/${widget.img}",
+                      width: 72,
+                      height: 72,
+                    ),
+                  ),
+                ],
               ),
-              ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding:
-                          const EdgeInsets.only(top: 10.0, left: 30, bottom: 8),
-                      child: Text(data[index]),
+              Row(
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10.0, left: 40, bottom: 8),
+                    child: Text(
+                      widget.model.title!,
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
+                  ),
+                ],
+              ),
+              (data.isNotEmpty)
+                  ? Column(mainAxisSize: MainAxisSize.min, children: data)
+                  : SizedBox(),
+              Container(
+                height: 60,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: _buttonData.map((button) {
+                    int index = _buttonData.indexOf(button);
+                    return GestureDetector(
+                      onTap: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: (_buttonData[index] == "Settle Up")
+                                ? Colors.orange.shade300
+                                : Colors.grey.shade600,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _buttonData[index],
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     );
-                  }),
+                  }).toList(),
+                ),
+              ),
               FutureBuilder(
                 builder: (ctx, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -101,9 +200,18 @@ class _GroupPageState extends State<GroupPage> {
                       );
                     } else if (snapshot.hasData) {
                       final data = snapshot.data as List<Widget>;
-                      return ListView(
-                        children: data,
-                      );
+                      if (data.length > 0)
+                        return Column(
+                          children: data,
+                        );
+                      else {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("All Settled Up",style: TextStyle(fontSize: 25,color: Colors.white),),
+                          ],
+                        );
+                      }
                     }
                   }
                   return ListShimmer(
@@ -112,43 +220,6 @@ class _GroupPageState extends State<GroupPage> {
                   );
                 },
                 future: getData(),
-              ),
-              Container(
-                height: 60,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: _buttonData.map((icon) {
-                    int index = _buttonData.indexOf(icon);
-                    return GestureDetector(
-                      onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          color: (_buttonData[index] == "Settle Up")
-                              ? Colors.orange
-                              : Colors.transparent,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                _buttonData[index],
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
               ),
               SizedBox(
                 height: 20,
@@ -179,7 +250,41 @@ class _GroupPageState extends State<GroupPage> {
                         color: Colors.green,
                       ),
                       Text(
-                        "Start a new group",
+                        "Add Members to Group",
+                        style: TextStyle(color: Colors.green),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 30,),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AddNewMembersToGroup(model: widget.model)),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.green,
+                      width: 2,
+                    ),
+                  ),
+                  width: 250,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(
+                        Icons.group_add,
+                        color: Colors.green,
+                      ),
+                      Text(
+                        "Add Friends to Group",
                         style: TextStyle(color: Colors.green),
                       ),
                     ],
@@ -194,6 +299,7 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   getData() async {
+    print("in xhZB");
     List<ExpenseModel> expenses =
         await APIService.getGroupExpenses(widget.model.sId!);
     List<Widget> a = [];
@@ -201,16 +307,18 @@ class _GroupPageState extends State<GroupPage> {
     expenses.forEach((element) {
       DateTime parseDate =
           new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
-      element.owe!.forEach((key, value) {
+      element.owe?.forEach((key, value) {
+        print(element.owe);
         a.add(ExpenseTile(
             date: parseDate.day.toString(),
-            month: monthsMap[parseDate.month]!,
-            amount: element.owe![uid]!,
+            month: monthsMap[parseDate.month] ?? "",
+            amount: element.owe?[uid],
             amountPaid: element.expense!.toString(),
-            paidBy: homeStore.friendsNameToUid[element.paidBy!]!,
-            title: element.title!));
+            paidBy: homeStore.friendsNameToUid[element.paidBy] ?? "",
+            title: element.title ?? ""));
       });
     });
+    // calculate();
     return a;
   }
 

@@ -14,7 +14,11 @@ class GroupModel {
     members = json['members'].cast<String>();
     items = json['items'].cast<String>();
     totalSpendings = json['totalSpendings'];
-    memberOwes = json['memberOwes'];
+    if(memberOwes!=null){
+      memberOwes?.forEach((key, value) {
+        memberOwes?[key]=value;
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {

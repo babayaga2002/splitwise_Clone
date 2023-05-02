@@ -304,7 +304,8 @@ class _AddExpenseState extends State<AddExpense> {
                   child: new Wrap(
                     children: <Widget>[
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
                         children: [
                           GestureDetector(
                               onTap: () {
@@ -397,36 +398,40 @@ class _EquallyTabState extends State<EquallyTab> {
     return Center(
       child: Column(
         children: [
+          SizedBox(height: 80,),
           Text("Everyone in the Group pays Equally"),
           SizedBox(height: 80,),
           GestureDetector(
             onTap: () {
               APIService.addNewExpensePaidEqually(widget.model!.sId!, widget.title!, widget.category, widget.uid, int.parse(widget.amount));
+              Navigator.pop(context);
+              Navigator.pop(context);
             },
             child: Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.green,
+                  color: Colors.black,
                   width: 2,
                 ),
               ),
-              width: 250,
+              width: 100,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Icon(
-                    Icons.group_add,
-                    color: Colors.green,
+                    Icons.money,
+                    color: Colors.black,
                   ),
                   Text(
                     "Done",
-                    style: TextStyle(color: Colors.green),
+                    style: TextStyle(color: Colors.black),
                   ),
                 ],
               ),
             ),
           ),
+          SizedBox(height: 30,),
         ],
       ),
     );
@@ -449,7 +454,6 @@ class _ManualTabState extends State<ManualTab> {
   @override
   Map<String,int> values={};
   Widget build(BuildContext context) {
-    var homeStore=context.read<HomeStore>();
     return FutureBuilder(
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -476,32 +480,34 @@ class _ManualTabState extends State<ManualTab> {
             a.add(GestureDetector(
               onTap: () {
                 APIService.addNewExpensePaidManually(widget.model!.sId!, widget.title!, widget.category, widget.uid, int.parse(widget.amount), values);
+                Navigator.pop(context);
               },
               child: Container(
+                margin: EdgeInsets.only(top: 30,bottom: 20),
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Colors.green,
+                    color: Colors.black,
                     width: 2,
                   ),
                 ),
-                width: 250,
+                width: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Icon(
                       Icons.group_add,
-                      color: Colors.green,
+                      color: Colors.black,
                     ),
                     Text(
                       "Done",
-                      style: TextStyle(color: Colors.green),
+                      style: TextStyle(color: Colors.black),
                     ),
                   ],
                 ),
               ),
             ),);
-            return ListView(
+            return Column(
               children: a,
             );
           }
@@ -542,7 +548,6 @@ class _PercentageTabState extends State<PercentageTab> {
   @override
   Map<String,int> values={};
   Widget build(BuildContext context) {
-    var homeStore=context.read<HomeStore>();
     return FutureBuilder(
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -574,27 +579,27 @@ class _PercentageTabState extends State<PercentageTab> {
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Colors.green,
+                    color: Colors.black,
                     width: 2,
                   ),
                 ),
-                width: 250,
+                width: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Icon(
                       Icons.group_add,
-                      color: Colors.green,
+                      color: Colors.black,
                     ),
                     Text(
                       "Done",
-                      style: TextStyle(color: Colors.green),
+                      style: TextStyle(color: Colors.black),
                     ),
                   ],
                 ),
               ),
             ),);
-            return ListView(
+            return Column(
               children: a,
             );
           }
@@ -609,7 +614,7 @@ class _PercentageTabState extends State<PercentageTab> {
   }
   getData()async{
     Map<String,String>m={};
-    widget.model?.members!.forEach((element) async{
+    widget.model?.members?.forEach((element) async{
       String name= await APIService.getUserName(element);
       if(name!=null){
         m[element]=name;

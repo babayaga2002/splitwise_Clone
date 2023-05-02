@@ -7,43 +7,69 @@ part 'loginStore.g.dart';
 class LoginStore = _LoginStore with _$LoginStore;
 
 abstract class _LoginStore with Store {
-  _LoginStore();
+  _LoginStore() {
+    autorun((p0) {
+      getUserData();
+    });
+  }
 
   @observable
-  ObservableMap<String, String> userData = ObservableMap<String,String>.of({});
+  Observable<String> name = Observable("");
+
+  @observable
+  Observable<String> phoneNumber = Observable("");
+
+  @observable
+  Observable<String> auth = Observable("");
+
+  @observable
+  Observable<String> image = Observable("");
 
   @action
-  void saveToPreferences(SharedPreferences instance, String name, String? image) {
-    Map<String,String>data={};
-    data["auth"] = instance.getString("auth") ?? " ";
-    data["name"] = name;
-    data["image"]= image ?? "";
-    instance.setString("name", name);
-    instance.getString("image") ?? "";
-    FirebaseFirestore.instance.collection('users').doc(userData["auth"]).set({
-      'name': name,
-      'image' : image ?? "",
+  Future<void> getUserData() async {
+    SharedPreferences instance = await SharedPreferences.getInstance();
+    auth = Observable(instance.getString("auth") ?? "");
+    name = Observable(instance.getString("name") ?? "");
+    image = Observable(instance.getString("image") ?? "");
+    phoneNumber = Observable(instance.getString("phone") ?? "");
+  }
+
+  Future<void> saveToServer() async {
+    FirebaseFirestore.instance.collection('users').doc(auth.value).set({
+      'name': name.value,
+      'image': image.value,
+      'phone' : phoneNumber.value,
     });
-    userData=ObservableMap<String,String>.of(data);
+  }
+
+  Future<void> saveNameToPrefernces(String userName) async {
+    SharedPreferences instance = await SharedPreferences.getInstance();
+    instance.setString("name", userName);
+    name = Observable<String>(userName);
+    saveToServer();
+  }
+
+  Future<void> saveImageToPrefernces(String img) async {
+    SharedPreferences instance = await SharedPreferences.getInstance();
+    instance.setString("image", img);
+    image = Observable(img);
+    saveToServer();
+  }
+
+  Future<void> savePhoneToPrefernces(String phone) async {
+    SharedPreferences instance = await SharedPreferences.getInstance();
+    instance.setString("phone", phone);
+    phoneNumber = Observable<String>(phone);
+    saveToServer();
   }
 
   @action
-  void saveToUserData(SharedPreferences instance) {
-    userData["auth"] = instance.getString("auth") ?? " ";
-    userData["name"] = instance.getString("name") ?? " ";
-    userData["image"] = instance.getString("image") ?? "";
-  }
-
-  @action
-  void logOut(SharedPreferences instance){
-    userData.clear();
+  Future<void> logout() async {
+    SharedPreferences instance = await SharedPreferences.getInstance();
+    name = Observable("");
+    auth = Observable("");
+    image = Observable("");
+    phoneNumber = Observable("");
     instance.clear();
-  }
-
-  @action
-  void saveImagePathToPreferences(SharedPreferences instance,String path){
-    userData["image"] = path;
-    instance.setString("image", path);
-    print(userData["image"]);
   }
 }

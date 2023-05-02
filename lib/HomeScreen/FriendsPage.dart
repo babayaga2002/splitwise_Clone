@@ -68,7 +68,7 @@ class _FriendsTabState extends State<FriendsTab> {
                           padding: const EdgeInsets.all(15.0),
                           child: Text(
                             homeStore.titleString,
-                            style: TextStyle(color: Colors.grey, fontSize: 16),
+                            style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ),
                         // Padding(
@@ -86,20 +86,25 @@ class _FriendsTabState extends State<FriendsTab> {
                     ),
                     (homeStore.friendOperation.error != null)
                         ? Center(
-                      child: Text("Error Loading the Groups"),
-                    )
-                        : (homeStore.friendOperation.value == null &&
-                        homeStore.friendsTilesActivityList == null)
-                        ? ListShimmer(
-                      count: 4,
-                    )
-                        : (homeStore.groupTiles.isEmpty)
-                        ? Center(child: Padding(
-                      padding: const EdgeInsets.all(40.0),
-                      child: Text("No Friends to Display",style: TextStyle(color: Colors.grey,fontSize: 20),),
-                    ))
-                        : SizedBox(),
-                    ...homeStore.friendsTilesActivityList,
+                            child: Text("Error Loading the Friends"),
+                          )
+                        : (homeStore.groupOperation.value == null &&
+                                homeStore.friendsTiles == null)
+                            ? ListShimmer(
+                                count: 4,
+                              )
+                            : (homeStore.friendsTiles.isEmpty)
+                                ? Center(
+                                    child: Padding(
+                                    padding: const EdgeInsets.all(40.0),
+                                    child: Text(
+                                      "No Friends to Display",
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 20),
+                                    ),
+                                  ))
+                                : SizedBox(),
+                    ...homeStore.friendsTiles,
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, AddNewFriendPage.id);
@@ -135,7 +140,7 @@ class _FriendsTabState extends State<FriendsTab> {
                 ),
               ),
       ),
-      floatingActionButton: float(isScrolled,context),
+      floatingActionButton: float(isScrolled, context),
     );
   }
 }

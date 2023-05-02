@@ -66,7 +66,6 @@ class MyApp extends StatelessWidget {
           AddNewGroupPage.id: (context) => AddNewGroupPage(),
           AddNewFriendPage.id: (context) =>AddNewFriendPage(),
           FriendsTab.id: (context) => FriendsTab(),
-          RecordPayment.id: (context) => RecordPayment(value: 10, ower: "you", borrower: "dms"),
         },
       ),
     );

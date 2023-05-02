@@ -55,6 +55,8 @@ class APIService {
   }
 
   static Future<bool> addNewUserToGroup(String groupId, String uid) async {
+    print(_addNewGroup + groupId + "/members");
+    print(uid);
     var res = await http.post(
       Uri.parse(_addNewGroup + groupId + "/members"),
       body: jsonEncode({
@@ -62,38 +64,35 @@ class APIService {
       }),
       headers: headers,
     );
+    print(res.statusCode.toString()+"bhcvmjhkj");
     if (res.statusCode == 200 || res.statusCode == 400) {
       return true;
     } else {
       print("Error");
-      throw Error();
+      return false;
     }
+
   }
 
   static Future<Map<String, String>> getFriendsData(List<String> uids) async {
     Map<String, String> m = {};
-    uids.forEach((element) async {
+    for(var element in uids) {
       String a = await getUserName(element);
       m[element] = a;
-    });
-    print(m);
+    }
     return m;
   }
 
   static Future<UserModel> getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String uid = sharedPreferences.getString("uid") ?? "sid";
-    print(uid);
-    print(_addNewUser + uid);
     http.Response response = await http.get(Uri.parse(_addNewUser + uid));
     var status = response.statusCode;
     var body = jsonDecode(response.body);
+    print(body);
     if (status == 200) {
-      print(body);
       UserModel user=UserModel.fromJson(body);
-      // print(user.groups);
       return user;
-      // return UserModel.fromJson(body);
     } else {
       print("Data could not be fetched : User Data");
       throw Exception("Data could not be fetched : User Data");
@@ -105,7 +104,7 @@ class APIService {
         await http.get(Uri.parse(_addNewUser + uid + "/name"));
     var status = response.statusCode;
     var body = jsonDecode(response.body);
-    print(body);
+    print("get user = "+body.toString());
     if (status == 200) {
       return body["name"];
     } else {
@@ -118,8 +117,6 @@ class APIService {
   static Future<bool> addNewGroup(String name) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String uid = sharedPreferences.getString("uid") ?? "sid";
-    print(uid);
-    print(name);
     var res = await http.post(
       Uri.parse(_addNewGroup),
       body: jsonEncode({
@@ -149,6 +146,7 @@ class APIService {
       }),
       headers: headers,
     );
+    print(res.body.toString()+"add expensee");
     if (res.statusCode == 200) {
       return true;
     }
@@ -203,19 +201,21 @@ class APIService {
 
   static Future<List<GroupModel>> getGroupData(List<String> groupList) async {
     List<GroupModel> a = [];
-    groupList.forEach((element) async {
+    for (var element in groupList){
       http.Response response =
-          await http.get(Uri.parse(_addNewGroup + element));
+      await http.get(Uri.parse(_addNewGroup + element));
       var status = response.statusCode;
       var body = jsonDecode(response.body);
       if (status == 200) {
+        GroupModel g=GroupModel.fromJson(body);
+        print("g = "+(g.title??"notitile"));
         a.add(GroupModel.fromJson(body));
       } else {
         print("Error");
         throw Error();
         throw Exception("Data could not be fetched");
       }
-    });
+    }
     return a;
   }
 
@@ -234,7 +234,8 @@ class APIService {
       throw Error();
       throw Exception("Data could not be fetched");
     }
-    a.sort((a, b) => a.date!.compareTo(b.date!));
+    print(a);
+    if(a.isNotEmpty) a.sort((a, b) => a.date!.compareTo(b.date!));
     return a;
   }
 

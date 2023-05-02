@@ -9,74 +9,90 @@ part of 'loginStore.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$LoginStore on _LoginStore, Store {
-  late final _$userDataAtom =
-      Atom(name: '_LoginStore.userData', context: context);
+  late final _$nameAtom = Atom(name: '_LoginStore.name', context: context);
 
   @override
-  ObservableMap<String, String> get userData {
-    _$userDataAtom.reportRead();
-    return super.userData;
+  Observable<String> get name {
+    _$nameAtom.reportRead();
+    return super.name;
   }
 
   @override
-  set userData(ObservableMap<String, String> value) {
-    _$userDataAtom.reportWrite(value, super.userData, () {
-      super.userData = value;
+  set name(Observable<String> value) {
+    _$nameAtom.reportWrite(value, super.name, () {
+      super.name = value;
     });
   }
 
-  late final _$_LoginStoreActionController =
-      ActionController(name: '_LoginStore', context: context);
+  late final _$phoneNumberAtom =
+      Atom(name: '_LoginStore.phoneNumber', context: context);
 
   @override
-  void saveToPreferences(
-      SharedPreferences instance, String name, String? image) {
-    final _$actionInfo = _$_LoginStoreActionController.startAction(
-        name: '_LoginStore.saveToPreferences');
-    try {
-      return super.saveToPreferences(instance, name, image);
-    } finally {
-      _$_LoginStoreActionController.endAction(_$actionInfo);
-    }
+  Observable<String> get phoneNumber {
+    _$phoneNumberAtom.reportRead();
+    return super.phoneNumber;
   }
 
   @override
-  void saveToUserData(SharedPreferences instance) {
-    final _$actionInfo = _$_LoginStoreActionController.startAction(
-        name: '_LoginStore.saveToUserData');
-    try {
-      return super.saveToUserData(instance);
-    } finally {
-      _$_LoginStoreActionController.endAction(_$actionInfo);
-    }
+  set phoneNumber(Observable<String> value) {
+    _$phoneNumberAtom.reportWrite(value, super.phoneNumber, () {
+      super.phoneNumber = value;
+    });
+  }
+
+  late final _$authAtom = Atom(name: '_LoginStore.auth', context: context);
+
+  @override
+  Observable<String> get auth {
+    _$authAtom.reportRead();
+    return super.auth;
   }
 
   @override
-  void logOut(SharedPreferences instance) {
-    final _$actionInfo =
-        _$_LoginStoreActionController.startAction(name: '_LoginStore.logOut');
-    try {
-      return super.logOut(instance);
-    } finally {
-      _$_LoginStoreActionController.endAction(_$actionInfo);
-    }
+  set auth(Observable<String> value) {
+    _$authAtom.reportWrite(value, super.auth, () {
+      super.auth = value;
+    });
+  }
+
+  late final _$imageAtom = Atom(name: '_LoginStore.image', context: context);
+
+  @override
+  Observable<String> get image {
+    _$imageAtom.reportRead();
+    return super.image;
   }
 
   @override
-  void saveImagePathToPreferences(SharedPreferences instance, String path) {
-    final _$actionInfo = _$_LoginStoreActionController.startAction(
-        name: '_LoginStore.saveImagePathToPreferences');
-    try {
-      return super.saveImagePathToPreferences(instance, path);
-    } finally {
-      _$_LoginStoreActionController.endAction(_$actionInfo);
-    }
+  set image(Observable<String> value) {
+    _$imageAtom.reportWrite(value, super.image, () {
+      super.image = value;
+    });
+  }
+
+  late final _$getUserDataAsyncAction =
+      AsyncAction('_LoginStore.getUserData', context: context);
+
+  @override
+  Future<void> getUserData() {
+    return _$getUserDataAsyncAction.run(() => super.getUserData());
+  }
+
+  late final _$logoutAsyncAction =
+      AsyncAction('_LoginStore.logout', context: context);
+
+  @override
+  Future<void> logout() {
+    return _$logoutAsyncAction.run(() => super.logout());
   }
 
   @override
   String toString() {
     return '''
-userData: ${userData}
+name: ${name},
+phoneNumber: ${phoneNumber},
+auth: ${auth},
+image: ${image}
     ''';
   }
 }

@@ -2,7 +2,7 @@ class ExpenseModel {
   String? sId;
   String? title;
   String? paidBy;
-  Map<String, int>? owe;
+  Map<String, dynamic>? owe;
   int? expense;
   String? groupId;
   int? category;
@@ -35,7 +35,7 @@ class ExpenseModel {
     data['_id'] = this.sId;
     data['title'] = this.title;
     data['paidBy'] = this.paidBy;
-    data['owe'] = this.owe!;
+    data['owe'] = this.owe;
     data['expense'] = this.expense;
     data['groupId'] = this.groupId;
     data['category'] = this.category;

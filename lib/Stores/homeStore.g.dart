@@ -9,6 +9,21 @@ part of 'homeStore.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$HomeStore on _HomeStore, Store {
+  Computed<List<Widget>>? _$friendsTilesComputed;
+
+  @override
+  List<Widget> get friendsTiles => (_$friendsTilesComputed ??=
+          Computed<List<Widget>>(() => super.friendsTiles,
+              name: '_HomeStore.friendsTiles'))
+      .value;
+  Computed<List<Widget>>? _$friendsTilesAddGroupPageComputed;
+
+  @override
+  List<Widget> get friendsTilesAddGroupPage =>
+      (_$friendsTilesAddGroupPageComputed ??= Computed<List<Widget>>(
+              () => super.friendsTilesAddGroupPage,
+              name: '_HomeStore.friendsTilesAddGroupPage'))
+          .value;
   Computed<String>? _$titleStringComputed;
 
   @override
@@ -68,22 +83,6 @@ mixin _$HomeStore on _HomeStore, Store {
   set loadOperation(ObservableFuture<UserModel?> value) {
     _$loadOperationAtom.reportWrite(value, super.loadOperation, () {
       super.loadOperation = value;
-    });
-  }
-
-  late final _$owedStringAtom =
-      Atom(name: '_HomeStore.owedString', context: context);
-
-  @override
-  Observable<String> get owedString {
-    _$owedStringAtom.reportRead();
-    return super.owedString;
-  }
-
-  @override
-  set owedString(Observable<String> value) {
-    _$owedStringAtom.reportWrite(value, super.owedString, () {
-      super.owedString = value;
     });
   }
 
@@ -268,23 +267,11 @@ mixin _$HomeStore on _HomeStore, Store {
   }
 
   @override
-  void getFriendsTiles() {
-    final _$actionInfo = _$_HomeStoreActionController.startAction(
-        name: '_HomeStore.getFriendsTiles');
-    try {
-      return super.getFriendsTiles();
-    } finally {
-      _$_HomeStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   String toString() {
     return '''
 uid: ${uid},
 indexAddExpense: ${indexAddExpense},
 loadOperation: ${loadOperation},
-owedString: ${owedString},
 groupOperation: ${groupOperation},
 friendOperation: ${friendOperation},
 groupTilesList: ${groupTilesList},
@@ -293,6 +280,8 @@ friendsTilesList: ${friendsTilesList},
 friendsTilesActivityList: ${friendsTilesActivityList},
 friendsNameToUid: ${friendsNameToUid},
 activityTiles: ${activityTiles},
+friendsTiles: ${friendsTiles},
+friendsTilesAddGroupPage: ${friendsTilesAddGroupPage},
 titleString: ${titleString},
 groupTiles: ${groupTiles}
     ''';

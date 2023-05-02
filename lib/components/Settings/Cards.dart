@@ -15,16 +15,38 @@ class CardOne extends StatefulWidget {
 class _CardOneState extends State<CardOne> {
   @override
   Widget build(BuildContext context) {
-    var loginStore=context.read<LoginStore>();
+    var loginStore = context.read<LoginStore>();
+    print(loginStore.image.value);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(25.0,20,25,0),
+      padding: const EdgeInsets.fromLTRB(25.0, 20, 25, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("${loginStore.userData["name"]}",style: TextStyle(color: Colors.white,fontSize: 28,),softWrap: true,),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                loginStore.name.value,
+                style: TextStyle(
+                  color: Colors.green.shade400,
+                  fontSize: 28,
+                ),
+                softWrap: true,
+              ),
+              SizedBox(height: 15,),
+              Text(
+                loginStore.phoneNumber.value,
+                style: TextStyle(
+                  color: Colors.green.shade400,
+                  fontSize: 18,
+                ),
+                softWrap: true,
+              ),
+            ],
+          ),
           GestureDetector(
-            onTap: (){
+            onTap: () {
               Navigator.pushNamed(context, EditProfile.id);
             },
             child: SizedBox(
@@ -35,9 +57,11 @@ class _CardOneState extends State<CardOne> {
                 fit: StackFit.expand,
                 children: [
                   CircleAvatar(
-                    backgroundImage: loginStore.userData["image"]==null ? null :FileImage(
-                      File(loginStore.userData["image"]!),
-                    ),
+                    backgroundImage: loginStore.image.value != ""
+                        ? FileImage(
+                            File(loginStore.image.value),
+                          )
+                        : null,
                   ),
                 ],
               ),
@@ -48,7 +72,6 @@ class _CardOneState extends State<CardOne> {
     );
   }
 }
-
 
 class CardTwo extends StatefulWidget {
   const CardTwo({Key? key}) : super(key: key);
@@ -64,29 +87,17 @@ class _CardTwoState extends State<CardTwo> {
     return ClipRRect(
       borderRadius: const BorderRadius.all(Radius.circular(10)),
       child: Container(
+        width: width-100,
         padding: EdgeInsets.all(8),
         color: Colors.grey.shade800,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: (width - 100) / 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Image.asset(""),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Help",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                    softWrap: true,
-                  ),
-                ],
-              ),
+            Text(
+              "Help",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+              softWrap: true,
             ),
           ],
         ),

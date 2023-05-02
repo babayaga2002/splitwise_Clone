@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:splitwise/Stores/loginStore.dart';
 import '../components/Settings/Cards.dart';
 
 class Settings extends StatefulWidget {
@@ -14,66 +16,51 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
-
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          CardOne(),
-          SizedBox(
-            height: 0.03625 * height,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CardTwo(),
-                CardTwo(),
-                CardTwo(),
-              ],
+    var loginStore=context.read<LoginStore>();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xff232932),
+        elevation: 1,
+        title: Text("Account",style: TextStyle(color: Colors.white,fontSize: 25),),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CardOne(),
+            SizedBox(
+              height: 0.03625 * height,
             ),
-          ),
-          SizedBox(
-            height: 0.015 * height,
-          ),
-          Divider(
-            thickness: 3,
-            color: Colors.grey,
-          ),
-          ListTile(
-            leading: const Icon(Icons.add,color: Colors.white,),
-            title: const Text(
-              'Messages',
-              style: TextStyle(color: Colors.white,fontSize: 20),
+            // ListTile(
+            //   leading: const Icon(Icons.qr_code,color: Colors.white,),
+            //   title: const Text(
+            //     'Scan Code',
+            //     style: TextStyle(color: Colors.white,fontSize: 20),
+            //   ),
+            //   onTap: () {},
+            // ),
+            SizedBox(
+              height: 0.01 * height,
             ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.add,color: Colors.white,),
-            title: const Text(
-              'Messages',
-              style: TextStyle(color: Colors.white,fontSize: 20),
+            Divider(
+              thickness: 3,
+              color: Colors.green.shade400,
             ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.add,color: Colors.white,),
-            title: const Text(
-              'Messages',
-              style: TextStyle(color: Colors.white,fontSize: 20),
+            ListTile(
+              leading: Icon(Icons.logout,color: Colors.green.shade200,),
+              title: Text(
+                'Log Out',
+                style: TextStyle(color: Colors.green.shade200,fontSize: 20),
+              ),
+              onTap: () {
+                loginStore.logout();
+                while(Navigator.canPop(context)){ // Navigator.canPop return true if can pop
+                  Navigator.pop(context);
+                }
+                Navigator.pop(context);
+              },
             ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.add,color: Colors.white,),
-            title: const Text(
-              'Messages',
-              style: TextStyle(color: Colors.white,fontSize: 20),
-            ),
-            onTap: () {},
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
