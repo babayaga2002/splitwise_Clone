@@ -10,13 +10,11 @@ class APIService {
   static const String host = "https://pll-splitwise-app.azurewebsites.net";
   static const String _addNewUser = "$host/users/";
   static const String _addNewGroup = "$host/groups/";
-  static const Map<String,String> headers={
+  static const Map<String, String> headers = {
     "Content-Type": "application/json"
   };
   static Future<bool> addNewUser(String name) async {
-    Map<String,String> headers={
-      "Content-Type": "application/json"
-    };
+    Map<String, String> headers = {"Content-Type": "application/json"};
     var res = await http.post(
       Uri.parse(_addNewUser),
       body: jsonEncode({
@@ -37,7 +35,6 @@ class APIService {
   }
 
   static Future<bool> addNewFriend(String uidA, String uidB) async {
-    print(_addNewUser + uidA + "/friends");
     var res = await http.post(
       Uri.parse(_addNewUser + uidA + "/friends"),
       body: jsonEncode({
@@ -46,7 +43,6 @@ class APIService {
       headers: headers,
     );
     if (res.statusCode == 200 || res.statusCode == 400) {
-      print(res.body);
       return true;
     } else {
       print("Error");
@@ -55,8 +51,6 @@ class APIService {
   }
 
   static Future<bool> addNewUserToGroup(String groupId, String uid) async {
-    print(_addNewGroup + groupId + "/members");
-    print(uid);
     var res = await http.post(
       Uri.parse(_addNewGroup + groupId + "/members"),
       body: jsonEncode({
@@ -64,19 +58,27 @@ class APIService {
       }),
       headers: headers,
     );
-    print(res.statusCode.toString()+"bhcvmjhkj");
     if (res.statusCode == 200 || res.statusCode == 400) {
       return true;
     } else {
       print("Error");
       return false;
     }
-
   }
 
   static Future<Map<String, String>> getFriendsData(List<String> uids) async {
     Map<String, String> m = {};
-    for(var element in uids) {
+    for (var element in uids) {
+      String a = await getUserName(element);
+      m[element] = a;
+    }
+    return m;
+  }
+
+  static Future<Map<String, String>> getGroupMembersData(
+      List<String> uids) async {
+    Map<String, String> m = {};
+    for (var element in uids) {
       String a = await getUserName(element);
       m[element] = a;
     }
@@ -91,7 +93,7 @@ class APIService {
     var body = jsonDecode(response.body);
     print(body);
     if (status == 200) {
-      UserModel user=UserModel.fromJson(body);
+      UserModel user = UserModel.fromJson(body);
       return user;
     } else {
       print("Data could not be fetched : User Data");
@@ -104,7 +106,6 @@ class APIService {
         await http.get(Uri.parse(_addNewUser + uid + "/name"));
     var status = response.statusCode;
     var body = jsonDecode(response.body);
-    print("get user = "+body.toString());
     if (status == 200) {
       return body["name"];
     } else {
@@ -128,7 +129,6 @@ class APIService {
     if (res.statusCode == 201) {
       return true;
     }
-    print(res.statusCode);
     throw Error();
     throw Exception("Unexpected error");
   }
@@ -146,7 +146,6 @@ class APIService {
       }),
       headers: headers,
     );
-    print(res.body.toString()+"add expensee");
     if (res.statusCode == 200) {
       return true;
     }
@@ -201,14 +200,14 @@ class APIService {
 
   static Future<List<GroupModel>> getGroupData(List<String> groupList) async {
     List<GroupModel> a = [];
-    for (var element in groupList){
+    for (var element in groupList) {
       http.Response response =
-      await http.get(Uri.parse(_addNewGroup + element));
+          await http.get(Uri.parse(_addNewGroup + element));
       var status = response.statusCode;
       var body = jsonDecode(response.body);
       if (status == 200) {
-        GroupModel g=GroupModel.fromJson(body);
-        print("g = "+(g.title??"notitile"));
+        GroupModel g = GroupModel.fromJson(body);
+        print(g.memberOwes.toString() + "sjnkxz");
         a.add(GroupModel.fromJson(body));
       } else {
         print("Error");
@@ -234,8 +233,7 @@ class APIService {
       throw Error();
       throw Exception("Data could not be fetched");
     }
-    print(a);
-    if(a.isNotEmpty) a.sort((a, b) => a.date!.compareTo(b.date!));
+    if (a.isNotEmpty) a.sort((a, b) => a.date!.compareTo(b.date!));
     return a;
   }
 

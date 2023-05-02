@@ -21,7 +21,7 @@ class GroupTile extends StatelessWidget {
     int x=random(0, 5);
     return ListTile(
       leading: Image.asset(
-        "path/${x}",
+        "images/grp${random(0, 4)}.png",
         width: 72,
         height: 72,
       ),

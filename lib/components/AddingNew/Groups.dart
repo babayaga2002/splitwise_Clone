@@ -90,7 +90,6 @@ class _AddNewGroupPageState extends State<AddNewGroupPage> {
                   style: TextStyle(color: Colors.white, fontSize: 18),
                   onChanged: (value) {
                     GroupName = value;
-                    print(GroupName);
                   },
                 ),
               ),

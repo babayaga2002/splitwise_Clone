@@ -16,7 +16,6 @@ class _CardOneState extends State<CardOne> {
   @override
   Widget build(BuildContext context) {
     var loginStore = context.read<LoginStore>();
-    print(loginStore.image.value);
     return Padding(
       padding: const EdgeInsets.fromLTRB(25.0, 20, 25, 0),
       child: Row(

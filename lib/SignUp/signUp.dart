@@ -84,7 +84,6 @@ class _SignUpState extends State<SignUp> {
                     style: TextStyle(color: Colors.white),
                     onChanged: (value) {
                       name = value;
-                      print(name);
                     },
                   ),
                 ),

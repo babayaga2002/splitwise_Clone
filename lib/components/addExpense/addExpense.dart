@@ -3,10 +3,10 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:splitwise/Service/api.dart';
 import 'package:splitwise/Stores/homeStore.dart';
+import 'package:splitwise/Stores/loginStore.dart';
 
 import '../../Models/GroupModel.dart';
 import '../Shimmer.dart';
-
 
 class AddExpense extends StatefulWidget {
   const AddExpense({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class _AddExpenseState extends State<AddExpense> {
   String expenseTitle = "";
   String amount = "";
   int selectedIndex = 0;
-  int index=-1;
+  int index = -1;
   GroupModel? selectedModel;
   List<IconData> _iconData = [
     Icons.add,
@@ -34,239 +34,265 @@ class _AddExpenseState extends State<AddExpense> {
   Widget build(BuildContext context) {
     var homeStore = context.read<HomeStore>();
     return Observer(
-      builder: (context){
+      builder: (context) {
         return SafeArea(
             child: Scaffold(
-              appBar: AppBar(
-                leading: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Icon(Icons.close),
+          appBar: AppBar(
+            leading: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Icon(Icons.close),
+            ),
+            title: Text("Add Expense"),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  if (expenseTitle == "" || int.parse(amount) == 0)
+                    showErrorDialog(context);
+                },
+                child: Text(
+                  "Done",
+                  style: TextStyle(color: Colors.black),
                 ),
-                title: Text("Add Expense"),
-                actions: [
-                  TextButton(
-                    onPressed: () async {
-                      if (expenseTitle == "" || int.parse(amount) == 0)
-                        showErrorDialog(context);
-                    },
-                    child: Text(
-                      "Done",
-                      style: TextStyle(color: Colors.black),
+              ),
+            ],
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "With You and: ",
+                        style: TextStyle(color: Colors.grey, fontSize: 18),
+                      ),
+                      Container(
+                        height: 60,
+                        width: 130,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: (homeStore.groupOperation != null &&
+                                  homeStore.groupOperation.value != null &&
+                                  homeStore.groupOperation.value!.isNotEmpty)
+                              ? homeStore.groupOperation.value!.map((model) {
+                                  int indexof = homeStore.groupOperation.value!
+                                      .indexOf(model);
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        index = indexof;
+                                        selectedModel = model;
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                          color: (index == indexof)
+                                              ? Colors.green.shade300
+                                              : Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              model!.title!,
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList()
+                              : [SizedBox()],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Container(
+                  height: 90.0,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      right: 15.0,
+                    ),
+                    child: TextField(
+                      autofocus: true,
+                      keyboardType: TextInputType.name,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide:
+                              BorderSide(width: 2, color: Color(0xff3D83C3)),
+                        ),
+                        labelText: "Expense Title",
+                        labelStyle: TextStyle(color: Color(0xff3D83C3)),
+                        prefixIcon: Icon(
+                          Icons.account_circle,
+                          color: Color(0xff3D83C3),
+                        ),
+                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      onChanged: (value) {
+                        setState(() {
+                          expenseTitle = value;
+                        });
+                      },
                     ),
                   ),
-                ],
-              ),
-              body: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text("With You and: ",style: TextStyle(color: Colors.grey,fontSize: 18),),
-                          Container(
-                            height: 60,
-                            width: 130,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: (homeStore.groupOperation!=null && homeStore.groupOperation.value!= null &&homeStore.groupOperation.value!.isNotEmpty)?homeStore.groupOperation.value!.map((model){
-                                int indexof = homeStore.groupOperation.value!.indexOf(model);
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      index=indexof;
-                                      selectedModel=model;
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                        color: (index==indexof)?Colors.green.shade300:Colors.transparent,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            model!.title!,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList():[SizedBox()],
-                            ),
-                          ),
-                        ],
+                      padding: const EdgeInsets.only(
+                        top: 4,
+                        left: 15.0,
+                        right: 15.0,
                       ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    Container(
-                      height: 90.0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 15.0,
-                          right: 15.0,
-                        ),
-                        child: TextField(
-                          autofocus: true,
-                          keyboardType: TextInputType.name,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide:
-                              BorderSide(width: 2, color: Color(0xff3D83C3)),
-                            ),
-                            labelText: "Expense Title",
-                            labelStyle: TextStyle(color: Color(0xff3D83C3)),
-                            prefixIcon: Icon(
-                              Icons.account_circle,
-                              color: Color(0xff3D83C3),
-                            ),
-                          ),
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                          onChanged: (value) {
-                            setState(() {
-                              expenseTitle = value;
-                            });
-                          },
+                      child: Text(
+                        "Category",
+                        style: TextStyle(
+                          color: Colors.grey,
                         ),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 4,
-                            left: 15.0,
-                            right: 15.0,
-                          ),
-                          child: Text(
-                            "Category",
-                            style: TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      height: 60,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: _iconData.map((icon) {
-                          int index = _iconData.indexOf(icon);
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedIndex = index;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  color: (selectedIndex==index)?Colors.green.shade300:Colors.transparent,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      _iconData[index],
-                                      color: Colors.grey,
-                                    ),
-                                    Text(
-                                      _iconString[index],
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    Container(
-                      height: 90.0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          left: 15.0,
-                          right: 15.0,
-                        ),
-                        child: TextField(
-                          autofocus: true,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide:
-                              BorderSide(width: 2, color: Color(0xff3D83C3)),
-                            ),
-                            labelText: "Amount",
-                            labelStyle: TextStyle(color: Color(0xff3D83C3)),
-                            prefixIcon: Icon(
-                              Icons.account_circle,
-                              color: Color(0xff3D83C3),
-                            ),
-                          ),
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                          onChanged: (value) {
-                            setState(() {
-                              amount = value;
-                            });
-                            print(amount);
-                          },
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Paid by You and Share",style: TextStyle(color: Colors.grey,fontSize: 13),),
-                        TextButton(
-                            onPressed: () {
-                              if(expenseTitle=="" || amount=="" || index==-1 || selectedModel==null) showErrorDialog(context);
-                              else showPicker(context,expenseTitle,amount,selectedModel!,selectedIndex,homeStore.uid.value);
-                            },
-                            child: Text(buttonTitles[homeStore.indexAddExpense])),
-                      ],
-                    )
                   ],
                 ),
-              ),
-            ));
+                Container(
+                  height: 60,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: _iconData.map((icon) {
+                      int index = _iconData.indexOf(icon);
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = index;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 100,
+                            decoration: BoxDecoration(
+                              color: (selectedIndex == index)
+                                  ? Colors.green.shade300
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _iconData[index],
+                                  color: Colors.grey,
+                                ),
+                                Text(
+                                  _iconString[index],
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Container(
+                  height: 90.0,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 10,
+                      left: 15.0,
+                      right: 15.0,
+                    ),
+                    child: TextField(
+                      autofocus: true,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide:
+                              BorderSide(width: 2, color: Color(0xff3D83C3)),
+                        ),
+                        labelText: "Amount",
+                        labelStyle: TextStyle(color: Color(0xff3D83C3)),
+                        prefixIcon: Icon(
+                          Icons.account_circle,
+                          color: Color(0xff3D83C3),
+                        ),
+                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      onChanged: (value) {
+                        setState(() {
+                          amount = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Paid by You and Share",
+                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          if (expenseTitle == "" ||
+                              amount == "" ||
+                              index == -1 ||
+                              selectedModel == null)
+                            showErrorDialog(context);
+                          else
+                            showPicker(
+                                context,
+                                expenseTitle,
+                                amount,
+                                selectedModel!,
+                                selectedIndex,
+                                homeStore.uid.value);
+                        },
+                        child: Text(buttonTitles[homeStore.indexAddExpense])),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ));
       },
     );
   }
@@ -291,7 +317,8 @@ class _AddExpenseState extends State<AddExpense> {
     );
   }
 
-  void showPicker(BuildContext context,String Title,String amount,GroupModel model,int category,String uid) {
+  void showPicker(BuildContext context, String Title, String amount,
+      GroupModel model, int category, String uid) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
@@ -305,7 +332,6 @@ class _AddExpenseState extends State<AddExpense> {
                     children: <Widget>[
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-
                         children: [
                           GestureDetector(
                               onTap: () {
@@ -367,9 +393,27 @@ class _AddExpenseState extends State<AddExpense> {
                               )),
                         ],
                       ),
-                      if(homeStore.indexAddExpense==0) EquallyTab(model: model, title: Title, amount: amount, category: category, uid: uid),
-                      if(homeStore.indexAddExpense==1) PercentageTab(model: model, title: Title, amount: amount, category: category, uid: uid),
-                      if(homeStore.indexAddExpense==2) ManualTab(model: model, title: Title, amount: amount, category: category, uid: uid),
+                      if (homeStore.indexAddExpense == 0)
+                        EquallyTab(
+                            model: model,
+                            title: Title,
+                            amount: amount,
+                            category: category,
+                            uid: uid),
+                      if (homeStore.indexAddExpense == 1)
+                        PercentageTab(
+                            model: model,
+                            title: Title,
+                            amount: amount,
+                            category: category,
+                            uid: uid),
+                      if (homeStore.indexAddExpense == 2)
+                        ManualTab(
+                            model: model,
+                            title: Title,
+                            amount: amount,
+                            category: category,
+                            uid: uid),
                     ],
                   ),
                 ),
@@ -386,24 +430,77 @@ class EquallyTab extends StatefulWidget {
   String amount;
   int category;
   String uid;
-  EquallyTab({Key? key,required this.model,required this.title,required this.amount,required this.category,required this.uid}) : super(key: key);
+  EquallyTab(
+      {Key? key,
+      required this.model,
+      required this.title,
+      required this.amount,
+      required this.category,
+      required this.uid})
+      : super(key: key);
 
   @override
   State<EquallyTab> createState() => _EquallyTabState();
 }
 
 class _EquallyTabState extends State<EquallyTab> {
+  late HomeStore homeStore;
+  GroupModel? model;
+  @override
+  void initState() {
+    homeStore = context.read<HomeStore>();
+    model = widget.model;
+    calculate();
+    super.initState();
+  }
+
+  List<Widget> members = [];
+  calculate() {
+    setState(() {
+      members = [];
+    });
+    Map<String, String> map = homeStore.GroupMemberName[model!.sId] ?? {};
+    map.forEach((key, value) {
+      setState(() {
+        members.add(Padding(
+          padding: const EdgeInsets.only(left: 30.0, top: 8, bottom: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ));
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         children: [
-          SizedBox(height: 80,),
+          SizedBox(
+            height: 20,
+          ),
           Text("Everyone in the Group pays Equally"),
-          SizedBox(height: 80,),
+          SizedBox(
+            height: 10,
+          ),
+          Column(
+            children: members,
+          ),
           GestureDetector(
             onTap: () {
-              APIService.addNewExpensePaidEqually(widget.model!.sId!, widget.title!, widget.category, widget.uid, int.parse(widget.amount));
+              APIService.addNewExpensePaidEqually(
+                  widget.model!.sId!,
+                  widget.title!,
+                  widget.category,
+                  widget.uid,
+                  int.parse(widget.amount));
               Navigator.pop(context);
               Navigator.pop(context);
             },
@@ -431,7 +528,9 @@ class _EquallyTabState extends State<EquallyTab> {
               ),
             ),
           ),
-          SizedBox(height: 30,),
+          SizedBox(
+            height: 30,
+          ),
         ],
       ),
     );
@@ -444,7 +543,14 @@ class ManualTab extends StatefulWidget {
   String amount;
   int category;
   String uid;
-  ManualTab({Key? key,required this.model,required this.title,required this.amount,required this.category,required this.uid}) : super(key: key);
+  ManualTab(
+      {Key? key,
+      required this.model,
+      required this.title,
+      required this.amount,
+      required this.category,
+      required this.uid})
+      : super(key: key);
 
   @override
   State<ManualTab> createState() => _ManualTabState();
@@ -452,83 +558,108 @@ class ManualTab extends StatefulWidget {
 
 class _ManualTabState extends State<ManualTab> {
   @override
-  Map<String,int> values={};
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                '${snapshot.error} occurred',
-                style: TextStyle(fontSize: 18),
-              ),
-            );
-          } else if (snapshot.hasData) {
-            final data = snapshot.data as Map<String,String>;
-            List<Widget>a=[];
-            data.forEach((key, value) {
-              a.add(ListTile(leading: Text(value),trailing: TextField(
-                style: TextStyle(color: Colors.white),
-                onChanged: (amount) {
-                  setState(() {
-                    values[key]=int.parse(amount);
-                  });
-                },
-              ),));
-            });
-            a.add(GestureDetector(
-              onTap: () {
-                APIService.addNewExpensePaidManually(widget.model!.sId!, widget.title!, widget.category, widget.uid, int.parse(widget.amount), values);
-                Navigator.pop(context);
-              },
-              child: Container(
-                margin: EdgeInsets.only(top: 30,bottom: 20),
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 2,
+  Map<String, int> values = {};
+  late HomeStore homeStore;
+  GroupModel? model;
+
+  @override
+  void initState() {
+    homeStore = context.read<HomeStore>();
+    model = widget.model;
+    calculate();
+    super.initState();
+  }
+
+  List<Widget> members = [];
+  calculate() {
+    setState(() {
+      members = [];
+    });
+    Map<String, String> map = homeStore.GroupMemberName[model!.sId] ?? {};
+    map.forEach((key, value) {
+      setState(() {
+        members.add(
+          Container(
+            padding:
+                EdgeInsets.only(left: 30.0, right: 30, top: 10, bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                width: 100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Icon(
-                      Icons.group_add,
-                      color: Colors.black,
+                SizedBox(width: 10.0),
+                Container(
+                  width: 100,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Enter Amount",
                     ),
-                    Text(
-                      "Done",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
+                    onChanged: (amount) {
+                      values[key] = int.parse(amount);
+                    },
+                  ),
                 ),
-              ),
-            ),);
-            return Column(
-              children: a,
-            );
-          }
-        }
-        return ListShimmer(
-          count: 3,
-          height: 40,
+              ],
+            ),
+          ),
         );
-      },
-      future: getData(),
-    );
-  }
-  getData()async{
-    Map<String,String>m={};
-    widget.model?.members!.forEach((element) async{
-      String name= await APIService.getUserName(element);
-      if(name!=null){
-        m[element]=name;
-      }
+      });
     });
-    return m;
+
+    setState(() {
+      members.add(
+        GestureDetector(
+          onTap: () {
+            APIService.addNewExpensePaidManually(
+                widget.model!.sId!,
+                widget.title!,
+                widget.category,
+                widget.uid,
+                int.parse(widget.amount),
+                values);
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+          child: Container(
+            margin: EdgeInsets.only(top: 20, bottom: 30),
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+                width: 2,
+              ),
+            ),
+            width: 100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(
+                  Icons.money,
+                  color: Colors.black,
+                ),
+                Text(
+                  "Done",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: members,
+      ),
+    );
   }
 }
 
@@ -538,7 +669,14 @@ class PercentageTab extends StatefulWidget {
   String amount;
   int category;
   String uid;
-  PercentageTab({Key? key,required this.model,required this.title,required this.amount,required this.category,required this.uid}) : super(key: key);
+  PercentageTab(
+      {Key? key,
+      required this.model,
+      required this.title,
+      required this.amount,
+      required this.category,
+      required this.uid})
+      : super(key: key);
 
   @override
   State<PercentageTab> createState() => _PercentageTabState();
@@ -546,81 +684,107 @@ class PercentageTab extends StatefulWidget {
 
 class _PercentageTabState extends State<PercentageTab> {
   @override
-  Map<String,int> values={};
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                '${snapshot.error} occurred',
-                style: TextStyle(fontSize: 18),
-              ),
-            );
-          } else if (snapshot.hasData) {
-            final data = snapshot.data as Map<String,String>;
-            List<Widget>a=[];
-            data.forEach((key, value) {
-              a.add(ListTile(leading: Text(value),trailing: TextField(
-                style: TextStyle(color: Colors.white),
-                onChanged: (amount) {
-                  setState(() {
-                    values[key]=int.parse(amount);
-                  });
-                },
-              ),));
-            });
-            a.add(GestureDetector(
-              onTap: () {
-                APIService.addNewExpensePaidPercentage(widget.model!.sId!, widget.title!, widget.category, widget.uid, int.parse(widget.amount), values);
-              },
-              child: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 2,
+  Map<String, int> values = {};
+  late HomeStore homeStore;
+  GroupModel? model;
+
+  @override
+  void initState() {
+    homeStore = context.read<HomeStore>();
+    model = widget.model;
+    calculate();
+    super.initState();
+  }
+
+  List<Widget> members = [];
+  calculate() {
+    setState(() {
+      members = [];
+    });
+    Map<String, String> map = homeStore.GroupMemberName[model!.sId] ?? {};
+    map.forEach((key, value) {
+      setState(() {
+        members.add(
+          Container(
+            padding:
+                EdgeInsets.only(left: 30.0, right: 30, top: 10, bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                width: 100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Icon(
-                      Icons.group_add,
-                      color: Colors.black,
+                SizedBox(width: 10.0),
+                Container(
+                  width: 100,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Enter Percent",
                     ),
-                    Text(
-                      "Done",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
+                    onChanged: (amount) {
+                      values[key] = int.parse(amount);
+                    },
+                  ),
                 ),
-              ),
-            ),);
-            return Column(
-              children: a,
-            );
-          }
-        }
-        return ListShimmer(
-          count: 3,
-          height: 40,
+              ],
+            ),
+          ),
         );
-      },
-      future: getData(),
+      });
+    });
+
+    setState(() {
+      members.add(
+        GestureDetector(
+          onTap: () {
+            APIService.addNewExpensePaidPercentage(
+                widget.model!.sId!,
+                widget.title!,
+                widget.category,
+                widget.uid,
+                int.parse(widget.amount),
+                values);
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+          child: Container(
+            margin: EdgeInsets.only(top: 20, bottom: 30),
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+                width: 2,
+              ),
+            ),
+            width: 100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(
+                  Icons.money,
+                  color: Colors.black,
+                ),
+                Text(
+                  "Done",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: members,
+      ),
     );
   }
-  getData()async{
-    Map<String,String>m={};
-    widget.model?.members?.forEach((element) async{
-      String name= await APIService.getUserName(element);
-      if(name!=null){
-        m[element]=name;
-      }
-    });
-    return m;
-  }
 }
-

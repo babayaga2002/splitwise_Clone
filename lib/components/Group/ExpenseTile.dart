@@ -5,7 +5,7 @@ class ExpenseTile extends StatefulWidget {
   String date="";
   String paidBy="";
   String amountPaid="";
-  int amount=0;
+  double amount=0;
   String title="";
   ExpenseTile({Key? key,required this.date,required this.month,required this.amount,required this.amountPaid,required this.paidBy,required this.title}) : super(key: key);
 

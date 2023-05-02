@@ -118,6 +118,22 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  late final _$GroupMemberNameAtom =
+      Atom(name: '_HomeStore.GroupMemberName', context: context);
+
+  @override
+  ObservableMap<String, Map<String, String>> get GroupMemberName {
+    _$GroupMemberNameAtom.reportRead();
+    return super.GroupMemberName;
+  }
+
+  @override
+  set GroupMemberName(ObservableMap<String, Map<String, String>> value) {
+    _$GroupMemberNameAtom.reportWrite(value, super.GroupMemberName, () {
+      super.GroupMemberName = value;
+    });
+  }
+
   late final _$groupTilesListAtom =
       Atom(name: '_HomeStore.groupTilesList', context: context);
 
@@ -164,23 +180,6 @@ mixin _$HomeStore on _HomeStore, Store {
   set friendsTilesList(ObservableList<Widget> value) {
     _$friendsTilesListAtom.reportWrite(value, super.friendsTilesList, () {
       super.friendsTilesList = value;
-    });
-  }
-
-  late final _$friendsTilesActivityListAtom =
-      Atom(name: '_HomeStore.friendsTilesActivityList', context: context);
-
-  @override
-  ObservableList<Widget> get friendsTilesActivityList {
-    _$friendsTilesActivityListAtom.reportRead();
-    return super.friendsTilesActivityList;
-  }
-
-  @override
-  set friendsTilesActivityList(ObservableList<Widget> value) {
-    _$friendsTilesActivityListAtom
-        .reportWrite(value, super.friendsTilesActivityList, () {
-      super.friendsTilesActivityList = value;
     });
   }
 
@@ -232,6 +231,15 @@ mixin _$HomeStore on _HomeStore, Store {
     return _$getUserDataAsyncAction.run(() => super.getUserData());
   }
 
+  late final _$getMemberUIDToNameMapPerGroupAsyncAction =
+      AsyncAction('_HomeStore.getMemberUIDToNameMapPerGroup', context: context);
+
+  @override
+  Future getMemberUIDToNameMapPerGroup() {
+    return _$getMemberUIDToNameMapPerGroupAsyncAction
+        .run(() => super.getMemberUIDToNameMapPerGroup());
+  }
+
   late final _$getActivityDataPerGroupAsyncAction =
       AsyncAction('_HomeStore.getActivityDataPerGroup', context: context);
 
@@ -274,10 +282,10 @@ indexAddExpense: ${indexAddExpense},
 loadOperation: ${loadOperation},
 groupOperation: ${groupOperation},
 friendOperation: ${friendOperation},
+GroupMemberName: ${GroupMemberName},
 groupTilesList: ${groupTilesList},
 groupTilesAddExpenseList: ${groupTilesAddExpenseList},
 friendsTilesList: ${friendsTilesList},
-friendsTilesActivityList: ${friendsTilesActivityList},
 friendsNameToUid: ${friendsNameToUid},
 activityTiles: ${activityTiles},
 friendsTiles: ${friendsTiles},

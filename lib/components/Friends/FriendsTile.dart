@@ -16,7 +16,7 @@ class FriendsTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
-        leading: Image.asset("path/${random(0, 5)}",width: 30,height: 30,),
+        leading: Image.asset("images/frd${random(0, 4)}.png",width: 30,height: 30,),
         title: Text(friendName,style: TextStyle(color: Colors.grey,fontSize: 20),),
       ),
     );

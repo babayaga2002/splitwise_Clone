@@ -24,10 +24,12 @@ abstract class _HomeStore with Store {
       return loadOperation.value;
     }, (_) {
       getData(loadOperation.value!);
+      getMemberUIDToNameMapPerGroup();
     });
     autorun((p0) {
       getUserData();
       getUid();
+      getMemberUIDToNameMapPerGroup();
     });
   }
   @observable
@@ -45,30 +47,25 @@ abstract class _HomeStore with Store {
   ObservableFuture<UserModel?> loadOperation = ObservableFuture.value(null);
 
   @observable
-  ObservableFuture<List<GroupModel?>> groupOperation =
-      ObservableFuture.value([]);
+  ObservableFuture<List<GroupModel?>> groupOperation = ObservableFuture.value([]);
 
   @observable
-  ObservableFuture<Map<String, String>> friendOperation =
-      ObservableFuture.value({});
+  ObservableFuture<Map<String, String>> friendOperation = ObservableFuture.value({});
+
+  @observable
+  ObservableMap<String,Map<String, String>> GroupMemberName = ObservableMap.of({});
 
   @observable
   ObservableList<Widget> groupTilesList = ObservableList<Widget>.of([]);
 
   @observable
-  ObservableList<Widget> groupTilesAddExpenseList =
-      ObservableList<Widget>.of([]);
+  ObservableList<Widget> groupTilesAddExpenseList = ObservableList<Widget>.of([]);
 
   @observable
   ObservableList<Widget> friendsTilesList = ObservableList<Widget>.of([]);
 
   @observable
-  ObservableList<Widget> friendsTilesActivityList =
-      ObservableList<Widget>.of([]);
-
-  @observable
-  ObservableMap<String, String> friendsNameToUid =
-      ObservableMap<String, String>.of({});
+  ObservableMap<String, String> friendsNameToUid = ObservableMap<String, String>.of({});
 
   @observable
   ObservableList<Widget> activityTiles = ObservableList<Widget>.of([]);
@@ -86,15 +83,12 @@ abstract class _HomeStore with Store {
 
   @action
   void getData(UserModel user) {
-    print(user.groups);
     if (loadOperation != null &&
         loadOperation.value != null &&
         loadOperation.value!.groups != null) {
-      print(loadOperation.value!.groups!);
       groupOperation =
           APIService.getGroupData(loadOperation.value!.groups!).asObservable();
       print(groupOperation.error);
-      print(groupOperation.value);
     }
     if (loadOperation != null &&
         loadOperation.value != null &&
@@ -103,7 +97,6 @@ abstract class _HomeStore with Store {
           APIService.getFriendsData(loadOperation.value!.friends ?? [])
               .asObservable();
       friendsNameToUid = ObservableMap.of(friendOperation.value ?? {});
-      print(friendsNameToUid);
     }
   }
 
@@ -121,7 +114,7 @@ abstract class _HomeStore with Store {
         friendOperation.value!.forEach((key, value) {
           a.add(FriendsTile(friendName: value, friendid: key));
         });
-        friendsTilesActivityList = ObservableList<Widget>.of(a);
+        friendsTilesList = ObservableList<Widget>.of(a);
       }
     }
     return a;
@@ -141,7 +134,7 @@ abstract class _HomeStore with Store {
         friendOperation.value!.forEach((key, value) {
           a.add(FriendsTile(friendName: value, friendid: key));
         });
-        friendsTilesActivityList = ObservableList<Widget>.of(a);
+        friendsTilesList = ObservableList<Widget>.of(a);
       }
     }
     return a;
@@ -168,10 +161,10 @@ abstract class _HomeStore with Store {
 
   String calculate(Map<String,dynamic> map) {
     int sum = 0;
-    if (uid == "")
+    if (uid.value == "")
       return "";
     else {
-      Map<String, int>? m = map[uid];
+      Map<String, int>? m = map[uid.value];
       if (m != null) {
         m.forEach((key, value) {
           sum += value;
@@ -188,6 +181,7 @@ abstract class _HomeStore with Store {
 
   @computed
   List<Widget> get groupTiles {
+    activityTiles=ObservableList<Widget>.of([]);
     List<Widget> a = [];
     if (groupOperation == null)
       groupOperation =
@@ -202,10 +196,24 @@ abstract class _HomeStore with Store {
           ));
           getActivityDataPerGroup(element.sId!);
         });
+        getMemberUIDToNameMapPerGroup();
       }
     }
     groupTilesList = ObservableList.of(a);
     return a;
+  }
+
+  @action
+  getMemberUIDToNameMapPerGroup() async {
+    Map<String,Map<String,String>>map={};
+    if (groupOperation.value != null && groupOperation.value!.isNotEmpty) {
+      for(var element in groupOperation.value!)  {
+        Map<String,String>m = await APIService.getGroupMembersData(element!.members??[]);
+        map[element.sId!]=m;
+      }
+    }
+    print(map);
+    GroupMemberName = ObservableMap.of(map);
   }
 
   @action
@@ -214,11 +222,9 @@ abstract class _HomeStore with Store {
     List<Widget> a = [];
     if (expenses.isNotEmpty) {
       for (var element in expenses) {
-        print(element.owe.toString());
         DateTime parseDate =
             new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
         element.owe?.forEach((key, value) {
-          print(key + " : " + value.toString());
           a.add(ActivityTile(
             title: "You added ${element.title!}",
             text1: (key == uid.value && value > 0)

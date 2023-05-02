@@ -33,8 +33,9 @@ class _GroupPageState extends State<GroupPage> {
   late HomeStore homeStore;
   @override
   void initState() {
-    super.initState();
     homeStore = context.read<HomeStore>();
+    calculate();
+    super.initState();
   }
 
   List<Widget> expenseTiles = [];
@@ -45,15 +46,17 @@ class _GroupPageState extends State<GroupPage> {
       data=[];
     });
     Map<String, int>? mp = widget.model.memberOwes?[homeStore.uid.value] ?? {};
-    Map<String, String> nameToUid = homeStore.friendsNameToUid;
-    mp?.forEach((key, value) {
+    print(mp);
+    Map<String, String> nameToUid = homeStore.GroupMemberName[widget.model.sId!]??{};
+    print(nameToUid);
+    mp.forEach((key, value) {
       if (nameToUid[key] != null && nameToUid[key] != "") {
         setState(() {
           finalMap[nameToUid[key]!] = value;
         });
       }
     });
-
+    print(finalMap);
     finalMap.forEach((key, value) {
       if (value > 0) {
         setState(() {
@@ -97,12 +100,10 @@ class _GroupPageState extends State<GroupPage> {
         ));
       });
     }
-    print(finalMap.toString() + "dsnbcb,d");
   }
 
   @override
   Widget build(BuildContext context) {
-    calculate();
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
@@ -129,7 +130,7 @@ class _GroupPageState extends State<GroupPage> {
                     padding:
                         const EdgeInsets.only(top: 8.0, left: 25, bottom: 10),
                     child: Image.asset(
-                      "path/${widget.img}",
+                      "images/grp${widget.img}.png",
                       width: 72,
                       height: 72,
                     ),
@@ -299,7 +300,6 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   getData() async {
-    print("in xhZB");
     List<ExpenseModel> expenses =
         await APIService.getGroupExpenses(widget.model.sId!);
     List<Widget> a = [];
@@ -308,7 +308,6 @@ class _GroupPageState extends State<GroupPage> {
       DateTime parseDate =
           new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
       element.owe?.forEach((key, value) {
-        print(element.owe);
         a.add(ExpenseTile(
             date: parseDate.day.toString(),
             month: monthsMap[parseDate.month] ?? "",
@@ -318,7 +317,6 @@ class _GroupPageState extends State<GroupPage> {
             title: element.title ?? ""));
       });
     });
-    // calculate();
     return a;
   }
 

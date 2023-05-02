@@ -24,7 +24,7 @@ class ActivityTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Image.asset(
-        "path/${random(0, 5)}",
+        "images/grp${random(0, 4)}.png",
         width: 30,
         height: 72,
       ),

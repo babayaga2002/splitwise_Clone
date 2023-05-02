@@ -4,9 +4,15 @@ class GroupModel {
   List<String>? members;
   List<String>? items;
   int? totalSpendings;
-  Map<String,Map<String,int>>? memberOwes;
+  Map<String, Map<String, int>>? memberOwes;
 
-  GroupModel({this.sId, this.title, this.members, this.items, this.totalSpendings, this.memberOwes});
+  GroupModel(
+      {this.sId,
+      this.title,
+      this.members,
+      this.items,
+      this.totalSpendings,
+      this.memberOwes});
 
   GroupModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -14,9 +20,9 @@ class GroupModel {
     members = json['members'].cast<String>();
     items = json['items'].cast<String>();
     totalSpendings = json['totalSpendings'];
-    if(memberOwes!=null){
-      memberOwes?.forEach((key, value) {
-        memberOwes?[key]=value;
+    if (json['memberOwes'] != null) {
+      json['memberOwes']?.forEach((key, value) {
+        this.memberOwes?[key] = value;
       });
     }
   }
