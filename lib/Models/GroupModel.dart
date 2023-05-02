@@ -3,8 +3,8 @@ class GroupModel {
   String? title;
   List<String>? members;
   List<String>? items;
-  int? totalSpendings;
-  Map<String, Map<String, int>>? memberOwes;
+  num? totalSpendings;
+  Map<String, Map<String, num>>? memberOwes;
 
   GroupModel(
       {this.sId,
@@ -20,9 +20,10 @@ class GroupModel {
     members = json['members'].cast<String>();
     items = json['items'].cast<String>();
     totalSpendings = json['totalSpendings'];
+    memberOwes = {};
     if (json['memberOwes'] != null) {
       json['memberOwes']?.forEach((key, value) {
-        this.memberOwes?[key] = value;
+        memberOwes?.addEntries([MapEntry(key, Map<String, num>.from(value))]);
       });
     }
   }

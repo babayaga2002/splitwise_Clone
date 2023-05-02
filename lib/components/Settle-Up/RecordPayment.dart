@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:splitwise/Service/api.dart';
 
 class RecordPayment extends StatefulWidget {
   String ower;
+  String owerid;
+  String borrowerid;
+  String groupId;
   String borrower;
-  int value;
+  num value;
   static String id="record_payment";
-  RecordPayment({Key? key,required this.value,required this.ower, required this.borrower}) : super(key: key);
+  RecordPayment({Key? key,required this.value,required this.ower, required this.borrower,required this.groupId,required this.borrowerid,required this.owerid}) : super(key: key);
 
   @override
   State<RecordPayment> createState() => _RecordPaymentState();
@@ -18,7 +22,8 @@ class _RecordPaymentState extends State<RecordPayment> {
   Razorpay razorpay = new Razorpay();
 
 
-  void handlerPaymentSuccess(){
+  void handlerPaymentSuccess() async {
+    if(await APIService.settleUp(widget.groupId, widget.borrowerid, widget.owerid, widget.value)) Navigator.pop(context);
     print('Payment Successful');
   }
 

@@ -36,7 +36,7 @@ class ActivityTile extends StatelessWidget {
         children: [
           Text(
             text1,
-            style: TextStyle(color: Colors.green.shade400,fontSize: 16,decoration: (isDeleted) ? TextDecoration.lineThrough : null),
+            style: TextStyle(color: color,fontSize: 16,decoration: (isDeleted) ? TextDecoration.lineThrough : null),
           ),
           Text(text2,style: TextStyle(color: Colors.grey.shade400,fontSize: 12),),
         ],

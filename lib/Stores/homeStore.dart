@@ -24,6 +24,10 @@ abstract class _HomeStore with Store {
       return loadOperation.value;
     }, (_) {
       getData(loadOperation.value!);
+    });
+    reaction((_) {
+      return groupOperation.value;
+    }, (_) {
       getMemberUIDToNameMapPerGroup();
     });
     autorun((p0) {
@@ -47,25 +51,30 @@ abstract class _HomeStore with Store {
   ObservableFuture<UserModel?> loadOperation = ObservableFuture.value(null);
 
   @observable
-  ObservableFuture<List<GroupModel?>> groupOperation = ObservableFuture.value([]);
+  ObservableFuture<List<GroupModel?>> groupOperation =
+      ObservableFuture.value([]);
 
   @observable
-  ObservableFuture<Map<String, String>> friendOperation = ObservableFuture.value({});
+  ObservableFuture<Map<String, String>> friendOperation =
+      ObservableFuture.value({});
 
   @observable
-  ObservableMap<String,Map<String, String>> GroupMemberName = ObservableMap.of({});
+  ObservableMap<String, Map<String, String>> GroupMemberName =
+      ObservableMap.of({});
 
   @observable
   ObservableList<Widget> groupTilesList = ObservableList<Widget>.of([]);
 
   @observable
-  ObservableList<Widget> groupTilesAddExpenseList = ObservableList<Widget>.of([]);
+  ObservableList<Widget> groupTilesAddExpenseList =
+      ObservableList<Widget>.of([]);
 
   @observable
   ObservableList<Widget> friendsTilesList = ObservableList<Widget>.of([]);
 
   @observable
-  ObservableMap<String, String> friendsNameToUid = ObservableMap<String, String>.of({});
+  ObservableMap<String, String> friendsNameToUid =
+      ObservableMap<String, String>.of({});
 
   @observable
   ObservableList<Widget> activityTiles = ObservableList<Widget>.of([]);
@@ -159,19 +168,19 @@ abstract class _HomeStore with Store {
     return text;
   }
 
-  String calculate(Map<String,dynamic> map) {
-    int sum = 0;
+  String calculate(Map<String, dynamic> map) {
+    num sum = 0;
     if (uid.value == "")
       return "";
     else {
-      Map<String, int>? m = map[uid.value];
+      Map<String, num>? m = map[uid.value];
       if (m != null) {
         m.forEach((key, value) {
           sum += value;
         });
       }
       if (sum > 0) {
-        return "You are owed " + sum.toString();
+        return "You are owed " + (sum).toString();
       } else if (sum == 0) {
         return "You are settled up";
       } else
@@ -181,7 +190,7 @@ abstract class _HomeStore with Store {
 
   @computed
   List<Widget> get groupTiles {
-    activityTiles=ObservableList<Widget>.of([]);
+    activityTiles = ObservableList<Widget>.of([]);
     List<Widget> a = [];
     if (groupOperation == null)
       groupOperation =
@@ -196,7 +205,6 @@ abstract class _HomeStore with Store {
           ));
           getActivityDataPerGroup(element.sId!);
         });
-        getMemberUIDToNameMapPerGroup();
       }
     }
     groupTilesList = ObservableList.of(a);
@@ -205,14 +213,14 @@ abstract class _HomeStore with Store {
 
   @action
   getMemberUIDToNameMapPerGroup() async {
-    Map<String,Map<String,String>>map={};
+    Map<String, Map<String, String>> map = {};
     if (groupOperation.value != null && groupOperation.value!.isNotEmpty) {
-      for(var element in groupOperation.value!)  {
-        Map<String,String>m = await APIService.getGroupMembersData(element!.members??[]);
-        map[element.sId!]=m;
+      for (var element in groupOperation.value!) {
+        Map<String, String> m =
+            await APIService.getGroupMembersData(element!.members ?? []);
+        map[element.sId!] = m;
       }
     }
-    print(map);
     GroupMemberName = ObservableMap.of(map);
   }
 
@@ -223,13 +231,14 @@ abstract class _HomeStore with Store {
     if (expenses.isNotEmpty) {
       for (var element in expenses) {
         DateTime parseDate =
-            new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
-        element.owe?.forEach((key, value) {
+        new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
+        num x =element.owe?[uid.value];
+        if(x<0){
+          num amount=element.expense!+x;
           a.add(ActivityTile(
-            title: "You added ${element.title!}",
-            text1: (key == uid.value && value > 0)
-                ? "You get back ${-element.owe?[uid.value]!}"
-                : "You owe ${element.owe?[uid.value]!}",
+            title:
+            "You added ${element.title!}",
+            text1: "You get back ${amount}",
             text2: parseDate.day.toString() +
                 "/" +
                 parseDate.month.toString() +
@@ -238,10 +247,64 @@ abstract class _HomeStore with Store {
                 ":" +
                 parseDate.minute.toString(),
             isDeleted: false,
-            color: (key == uid.value && value > 0)?Colors.green.shade400:Colors.orange.shade400,
+            color: Colors.green.shade400,
           ));
-        });
+        }
+        else{
+          a.add(ActivityTile(
+            title:
+            "${GroupMemberName.nonObservableInner[element.paidBy]} added ${element.title!}",
+            text1: "You get back ${-x}",
+            text2: parseDate.day.toString() +
+                "/" +
+                parseDate.month.toString() +
+                " " +
+                parseDate.hour.toString() +
+                ":" +
+                parseDate.minute.toString(),
+            isDeleted: false,
+            color: Colors.orange.shade400,
+          ));
+        }
       }
+      //   DateTime parseDate =
+      //       new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
+      //   element.owe?.remove(element.paidBy);
+      //   if (element.paidBy == uid.value) {
+      //     element.owe?.forEach((key, value) {
+      //       a.add(ActivityTile(
+      //         title:
+      //         "${GroupMemberName.nonObservableInner[element.paidBy]} added ${element.title!}",
+      //         text1: "You get back ${value} from ${GroupMemberName.nonObservableInner[key]}",
+      //         text2: parseDate.day.toString() +
+      //             "/" +
+      //             parseDate.month.toString() +
+      //             " " +
+      //             parseDate.hour.toString() +
+      //             ":" +
+      //             parseDate.minute.toString(),
+      //         isDeleted: false,
+      //         color: Colors.green.shade400,
+      //       ));
+      //     });
+      //   }
+      //   else{
+      //     a.add(ActivityTile(
+      //       title:
+      //       "${this.GroupMemberName[element.paidBy]} added ${element.title!}",
+      //       text1: "You borrowed ${element.owe?[uid.value]} from ${GroupMemberName[element.paidBy]}",
+      //       text2: parseDate.day.toString() +
+      //           "/" +
+      //           parseDate.month.toString() +
+      //           " " +
+      //           parseDate.hour.toString() +
+      //           ":" +
+      //           parseDate.minute.toString(),
+      //       isDeleted: false,
+      //       color: Colors.orange.shade400,
+      //     ));
+      //   }
+      // }
       if (a.isEmpty) a.add(Text("All Settled Group Expenses with Members"));
       activityTiles.addAll(ObservableList.of(a));
     }

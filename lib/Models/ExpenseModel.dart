@@ -3,7 +3,7 @@ class ExpenseModel {
   String? title;
   String? paidBy;
   Map<String, dynamic>? owe;
-  int? expense;
+  num? expense;
   String? groupId;
   int? category;
   String? date;

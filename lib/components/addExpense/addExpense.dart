@@ -48,7 +48,7 @@ class _AddExpenseState extends State<AddExpense> {
             actions: [
               TextButton(
                 onPressed: () async {
-                  if (expenseTitle == "" || int.parse(amount) == 0)
+                  if (expenseTitle == "" || num.parse(amount) == 0)
                     showErrorDialog(context);
                 },
                 child: Text(

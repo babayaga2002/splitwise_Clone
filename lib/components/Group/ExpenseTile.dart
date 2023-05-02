@@ -5,7 +5,7 @@ class ExpenseTile extends StatefulWidget {
   String date="";
   String paidBy="";
   String amountPaid="";
-  double amount=0;
+  num amount=0;
   String title="";
   ExpenseTile({Key? key,required this.date,required this.month,required this.amount,required this.amountPaid,required this.paidBy,required this.title}) : super(key: key);
 
@@ -29,11 +29,11 @@ class _ExpenseTileState extends State<ExpenseTile> {
           ],
         ),
         title: Text(widget.title,style: TextStyle(color: Colors.grey.shade300,fontSize: 20)),
-        subtitle: Text(widget.paidBy+" paid "+widget.amountPaid,style: TextStyle(color: Colors.grey.shade400,fontSize: 13),),
+        subtitle: Text(widget.paidBy +" paid "+widget.amountPaid,style: TextStyle(color: Colors.grey.shade400,fontSize: 13),),
         trailing: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            (widget.amount<0)?Text("You lent",style: TextStyle(color: Colors.grey.shade400,fontSize: 13),):Text("You Borrowed",style: TextStyle(color: Colors.grey.shade400,fontSize: 16),),
+            (widget.amount>0)?Text("You lent",style: TextStyle(color: Colors.grey.shade400,fontSize: 13),):Text("You Borrowed",style: TextStyle(color: Colors.grey.shade400,fontSize: 16),),
             SizedBox(height: 4,),
             Text(widget.amount.toString(),style: TextStyle(color: Colors.grey.shade400,fontSize: 18),),
           ],

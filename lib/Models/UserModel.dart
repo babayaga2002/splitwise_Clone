@@ -3,7 +3,7 @@ class UserModel {
   String? name;
   List<String>? friends;
   List<String>? groups;
-  int? totalSpendings;
+  num? totalSpendings;
   List<String>? items;
   int? iV;
 

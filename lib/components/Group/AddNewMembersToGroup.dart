@@ -60,8 +60,9 @@ class _AddNewMembersToGroupState extends State<AddNewMembersToGroup> {
                         )
                             : null,
                       ),
-                      child: Text('Scan Code'),
+                      child: Text('MyCode',style: TextStyle(color: Colors.grey,fontSize: 20),),
                     )),
+                SizedBox(width: 20,),
                 GestureDetector(
                     onTap: () {
                       setState(() {
@@ -80,7 +81,7 @@ class _AddNewMembersToGroupState extends State<AddNewMembersToGroup> {
                         )
                             : null,
                       ),
-                      child: Text('MyCode'),
+                      child: Text('Scan Code',style: TextStyle(color: Colors.grey,fontSize: 20),),
                     )),
               ],
             ),

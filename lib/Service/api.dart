@@ -66,6 +66,28 @@ class APIService {
     }
   }
 
+  static Future<bool> settleUp(
+      String groupId, String payerId, String receiverId, num amount) async {
+    print(_addNewGroup + groupId + "/settle-up");
+    print([payerId, groupId, receiverId]);
+    var res = await http.post(
+      Uri.parse(_addNewGroup + groupId + "/settle-up"),
+      body: jsonEncode({
+        "payerId": payerId,
+        "receiverId": receiverId,
+        "amount": amount,
+      }),
+      headers: headers,
+    );
+    print(res.body);
+    if (res.statusCode == 200) {
+      return true;
+    } else {
+      print("Error");
+      return false;
+    }
+  }
+
   static Future<Map<String, String>> getFriendsData(List<String> uids) async {
     Map<String, String> m = {};
     for (var element in uids) {
@@ -207,7 +229,6 @@ class APIService {
       var body = jsonDecode(response.body);
       if (status == 200) {
         GroupModel g = GroupModel.fromJson(body);
-        print(g.memberOwes.toString() + "sjnkxz");
         a.add(GroupModel.fromJson(body));
       } else {
         print("Error");
@@ -226,6 +247,7 @@ class APIService {
     var body = jsonDecode(response.body);
     if (status == 200) {
       for (var element in body) {
+        print(element);
         a.add(ExpenseModel.fromJson(element));
       }
     } else {

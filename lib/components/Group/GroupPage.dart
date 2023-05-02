@@ -7,6 +7,7 @@ import 'package:splitwise/Service/api.dart';
 import 'package:splitwise/Stores/homeStore.dart';
 import 'package:splitwise/components/Group/AddNewMembersToGroup.dart';
 import 'package:splitwise/components/Group/ExpenseTile.dart';
+import 'package:splitwise/components/Settle-Up/SettleUp.dart';
 
 import '../../Models/GroupModel.dart';
 import '../Shimmer.dart';
@@ -40,15 +41,14 @@ class _GroupPageState extends State<GroupPage> {
 
   List<Widget> expenseTiles = [];
   List<Widget> data = [];
-  Map<String, int> finalMap = {};
+  Map<String, num> finalMap = {};
   void calculate() {
     setState(() {
-      data=[];
+      data = [];
     });
-    Map<String, int>? mp = widget.model.memberOwes?[homeStore.uid.value] ?? {};
-    print(mp);
-    Map<String, String> nameToUid = homeStore.GroupMemberName[widget.model.sId!]??{};
-    print(nameToUid);
+    Map<String, num>? mp = widget.model.memberOwes?[homeStore.uid.value] ?? {};
+    Map<String, String> nameToUid =
+        homeStore.GroupMemberName[widget.model.sId!] ?? {};
     mp.forEach((key, value) {
       if (nameToUid[key] != null && nameToUid[key] != "") {
         setState(() {
@@ -65,7 +65,10 @@ class _GroupPageState extends State<GroupPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 40.0, top: 5, bottom: 5),
-                child: Text(key + " owes you " + value.toString()),
+                child: Text(
+                  key + " owes you " + value.toString(),
+                  style: TextStyle(color: Colors.white, fontSize: 13),
+                ),
               ),
             ],
           ));
@@ -77,14 +80,17 @@ class _GroupPageState extends State<GroupPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 40.0, top: 5, bottom: 5),
-                child: Text("You owe " + key + " " + (-value).toString()),
+                child: Text(
+                  "You owe " + key + " " + (-value).toString(),
+                  style: TextStyle(color: Colors.white, fontSize: 13),
+                ),
               ),
             ],
           ));
         });
       }
     });
-    if (data.isEmpty) {
+    if (data.length == 1) {
       setState(() {
         data.add(Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -159,7 +165,13 @@ class _GroupPageState extends State<GroupPage> {
                   children: _buttonData.map((button) {
                     int index = _buttonData.indexOf(button);
                     return GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SettleUp(model: widget.model,),
+                            ));
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
@@ -201,7 +213,7 @@ class _GroupPageState extends State<GroupPage> {
                       );
                     } else if (snapshot.hasData) {
                       final data = snapshot.data as List<Widget>;
-                      if (data.length > 0)
+                      if (data.length > 1)
                         return Column(
                           children: data,
                         );
@@ -209,7 +221,11 @@ class _GroupPageState extends State<GroupPage> {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("All Settled Up",style: TextStyle(fontSize: 25,color: Colors.white),),
+                            Text(
+                              "All Settled Up",
+                              style:
+                                  TextStyle(fontSize: 25, color: Colors.white),
+                            ),
                           ],
                         );
                       }
@@ -220,7 +236,7 @@ class _GroupPageState extends State<GroupPage> {
                     height: 40,
                   );
                 },
-                future: getData(),
+                future: getData(widget.model),
               ),
               SizedBox(
                 height: 20,
@@ -258,40 +274,42 @@ class _GroupPageState extends State<GroupPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 30,),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            AddNewMembersToGroup(model: widget.model)),
-                  );
-                },
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.green,
-                      width: 2,
-                    ),
-                  ),
-                  width: 250,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Icon(
-                        Icons.group_add,
-                        color: Colors.green,
-                      ),
-                      Text(
-                        "Add Friends to Group",
-                        style: TextStyle(color: Colors.green),
-                      ),
-                    ],
-                  ),
-                ),
+              SizedBox(
+                height: 30,
               ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //           builder: (context) =>
+              //               AddNewMembersToGroup(model: widget.model)),
+              //     );
+              //   },
+              //   child: Container(
+              //     padding: EdgeInsets.all(8),
+              //     decoration: BoxDecoration(
+              //       border: Border.all(
+              //         color: Colors.green,
+              //         width: 2,
+              //       ),
+              //     ),
+              //     width: 250,
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //       children: [
+              //         Icon(
+              //           Icons.group_add,
+              //           color: Colors.green,
+              //         ),
+              //         Text(
+              //           "Add Friends to Group",
+              //           style: TextStyle(color: Colors.green),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -299,23 +317,45 @@ class _GroupPageState extends State<GroupPage> {
     );
   }
 
-  getData() async {
+  getData(GroupModel model) async {
     List<ExpenseModel> expenses =
         await APIService.getGroupExpenses(widget.model.sId!);
-    List<Widget> a = [];
-    String uid = homeStore.uid.value;
+    List<Widget> a = [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 40.0, top: 5, bottom: 5),
+            child: Text(
+              "May 2023",
+              style: TextStyle(color: Colors.white, fontSize: 13),
+            ),
+          ),
+        ],
+      ),
+    ];
     expenses.forEach((element) {
       DateTime parseDate =
           new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(element.date!);
-      element.owe?.forEach((key, value) {
+      num x = element.owe?[homeStore.uid.value] ?? 0;
+      if (x < 0) {
+        num amount = element.expense! + x;
         a.add(ExpenseTile(
             date: parseDate.day.toString(),
             month: monthsMap[parseDate.month] ?? "",
-            amount: element.owe?[uid],
+            amount: amount,
             amountPaid: element.expense!.toString(),
-            paidBy: homeStore.friendsNameToUid[element.paidBy] ?? "",
+            paidBy: homeStore.GroupMemberName[model.sId]?[element.paidBy] ?? "",
             title: element.title ?? ""));
-      });
+      } else if (x > 0) {
+        a.add(ExpenseTile(
+            date: parseDate.day.toString(),
+            month: monthsMap[parseDate.month] ?? "",
+            amount: -x,
+            amountPaid: element.expense!.toString(),
+            paidBy: homeStore.GroupMemberName[model.sId]?[element.paidBy] ?? "",
+            title: element.title ?? ""));
+      }
     });
     return a;
   }
