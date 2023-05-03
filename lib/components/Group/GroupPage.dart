@@ -57,6 +57,7 @@ class _GroupPageState extends State<GroupPage> {
         });
       }
     });
+    print(finalMap);
     finalMap.forEach((key, value) {
       if (value > 0) {
         setState(() {
@@ -66,7 +67,7 @@ class _GroupPageState extends State<GroupPage> {
               Padding(
                 padding: const EdgeInsets.only(left: 40.0, top: 5, bottom: 5),
                 child: Text(
-                  key + " owes you " + value.toString(),
+                  key + " lent you " + value.toString(),
                   style: TextStyle(color: Colors.white, fontSize: 13),
                 ),
               ),

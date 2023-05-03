@@ -175,7 +175,7 @@ abstract class _HomeStore with Store {
       } else if (loadOperation.value!.totalSpendings == 0) {
         text = "You are all settled-up";
       } else
-        text = "Overall, you owe " +
+        text = "Totally You owe " +
             (-loadOperation.value!.totalSpendings!).toString();
     }
     return text;
@@ -193,11 +193,11 @@ abstract class _HomeStore with Store {
         });
       }
       if (sum > 0) {
-        return "You are owed " + (sum).toString();
+        return "You borrowed " + (sum).toString();
       } else if (sum == 0) {
         return "You are settled up";
       } else
-        return "You owe " + (-sum).toString();
+        return "You owed " + (-sum).toString();
     }
   }
 

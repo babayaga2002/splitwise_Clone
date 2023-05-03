@@ -156,6 +156,7 @@ class APIService {
 
   static Future<bool> addNewExpensePaidEqually(String groupId, String title,
       int category, String paid_by, int expense) async {
+    print([groupId, title, category, paid_by, expense]);
     var res = await http.post(
       Uri.parse(_addNewGroup + groupId + "/items/"),
       body: jsonEncode({
