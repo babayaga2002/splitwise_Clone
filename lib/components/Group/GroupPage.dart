@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:splitwise/Models/ExpenseModel.dart';
 import 'package:splitwise/Service/api.dart';
 import 'package:splitwise/Stores/homeStore.dart';
+import 'package:splitwise/components/Group/AddNewFriendsToGroup.dart';
 import 'package:splitwise/components/Group/AddNewMembersToGroup.dart';
 import 'package:splitwise/components/Group/ExpenseTile.dart';
 import 'package:splitwise/components/Settle-Up/SettleUp.dart';
@@ -56,7 +57,6 @@ class _GroupPageState extends State<GroupPage> {
         });
       }
     });
-    print(finalMap);
     finalMap.forEach((key, value) {
       if (value > 0) {
         setState(() {
@@ -277,39 +277,39 @@ class _GroupPageState extends State<GroupPage> {
               SizedBox(
                 height: 30,
               ),
-              // GestureDetector(
-              //   onTap: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //           builder: (context) =>
-              //               AddNewMembersToGroup(model: widget.model)),
-              //     );
-              //   },
-              //   child: Container(
-              //     padding: EdgeInsets.all(8),
-              //     decoration: BoxDecoration(
-              //       border: Border.all(
-              //         color: Colors.green,
-              //         width: 2,
-              //       ),
-              //     ),
-              //     width: 250,
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //       children: [
-              //         Icon(
-              //           Icons.group_add,
-              //           color: Colors.green,
-              //         ),
-              //         Text(
-              //           "Add Friends to Group",
-              //           style: TextStyle(color: Colors.green),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AddNewFriendsToGroup(groupId: widget.model.sId!)),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.green,
+                      width: 2,
+                    ),
+                  ),
+                  width: 250,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(
+                        Icons.group_add,
+                        color: Colors.green,
+                      ),
+                      Text(
+                        "Add Friends to Group",
+                        style: TextStyle(color: Colors.green),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),

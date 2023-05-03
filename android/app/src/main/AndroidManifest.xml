@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pll.splitwise">
    <application
-        android:label="splitwise"
+        android:label="CS331: Splitwise"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

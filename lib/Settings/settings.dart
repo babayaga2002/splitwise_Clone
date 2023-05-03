@@ -30,14 +30,14 @@ class _SettingsState extends State<Settings> {
             SizedBox(
               height: 0.03625 * height,
             ),
-            ListTile(
-              leading: const Icon(Icons.qr_code,color: Colors.white,),
-              title: const Text(
-                'Scan Code',
-                style: TextStyle(color: Colors.white,fontSize: 20),
-              ),
-              onTap: () {},
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.qr_code,color: Colors.white,),
+            //   title: const Text(
+            //     'Scan Code',
+            //     style: TextStyle(color: Colors.white,fontSize: 20),
+            //   ),
+            //   onTap: () {},
+            // ),
             SizedBox(
               height: 0.01 * height,
             ),

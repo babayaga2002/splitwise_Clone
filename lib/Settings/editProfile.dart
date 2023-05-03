@@ -127,7 +127,7 @@ class _EditProfileState extends State<EditProfile> {
                   padding: const EdgeInsets.fromLTRB(15.0, 10, 15, 20),
                   child: Text(
                     "Edit Account",
-                    style: TextStyle(color: Colors.white, fontSize: 40),
+                    style: TextStyle(color: Colors.white, fontSize: 25),
                   ),
                 ),
                 Container(
@@ -184,7 +184,7 @@ class _EditProfileState extends State<EditProfile> {
                     style: TextStyle(color: Colors.white54, fontSize: 15),
                   ),
                   subtitle: Text(
-                    "${loginStore.name}",
+                    "${loginStore.name.value}",
                     style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                   onTap: () {},

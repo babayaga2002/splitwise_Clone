@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:splitwise/HomeScreen/FriendsPage.dart';
 import 'package:splitwise/Settings/editProfile.dart';
-import 'package:splitwise/Settings/privacy.dart';
 import 'package:splitwise/Settings/settings.dart';
 import 'package:splitwise/SignUp/otpVerification.dart';
 import 'package:splitwise/SplashScreen/splashScreen.dart';
@@ -61,7 +60,6 @@ class MyApp extends StatelessWidget {
           SignUp.id: (context) => SignUp(),
           HomePage.id: (context) => HomePage(),
           Settings.id: (context) => Settings(),
-          Privacy.id: (context) => Privacy(),
           EditProfile.id: (context) => EditProfile(),
           AddNewGroupPage.id: (context) => AddNewGroupPage(),
           AddNewFriendPage.id: (context) =>AddNewFriendPage(),

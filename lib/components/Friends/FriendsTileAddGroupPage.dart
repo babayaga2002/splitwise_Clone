@@ -1,25 +1,41 @@
 import "package:flutter/material.dart";
 import 'dart:math';
 
-class FriendsTileGroupPage extends StatelessWidget {
+class FriendsTileAddGroupFriends extends StatefulWidget {
   String friendName="";
-  String friendid="";
+  String friendUid="";
+  FriendsTileAddGroupFriends({Key? key,required this.friendName,required this.friendUid}) : super(key: key);
 
+  @override
+  State<FriendsTileAddGroupFriends> createState() =>
+      _FriendsTileAddGroupFriendsState();
+}
 
-  FriendsTileGroupPage({Key? key,required this.friendName,required this.friendid}) : super(key: key);
-
+class _FriendsTileAddGroupFriendsState
+    extends State<FriendsTileAddGroupFriends> {
+  bool value = false;
+  void onChanged(bool? val) {
+    setState(() {
+      value = val ?? false;
+    });
+  }
   int random(int min, int max) {
     return min + Random().nextInt(max - min);
   }
-
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: (){
-
-      },
-      leading: Image.asset("path/${random(0, 5)}",width: 30,height: 30,),
-      title: Text(friendName),
+    return CheckboxListTile(
+      value: value,
+      onChanged: onChanged,
+      secondary: Image.asset(
+        "images/frd${random(0, 4)}.png",
+        width: 30,
+        height: 30,
+      ),
+      title: Text(
+        widget.friendName,
+        style: TextStyle(color: Colors.grey, fontSize: 20),
+      ),
     );
   }
 }

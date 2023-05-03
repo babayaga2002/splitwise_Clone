@@ -10,7 +10,7 @@ FloatingActionButton float(bool isScrolled,BuildContext context) {
       );
     },
     label: Text("Add Expense"),
-    icon: Icon(Icons.access_alarms_rounded),
+    icon: Icon(Icons.add),
     isExtended: isScrolled,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
   );

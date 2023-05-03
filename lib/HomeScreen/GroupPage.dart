@@ -87,7 +87,7 @@ class _HomeTabState extends State<HomeTab> {
                         // ...homeStore.groupTiles,
                         (homeStore.groupOperation.error != null)
                             ? Center(
-                                child: Text("Error Loading the Groups"),
+                                child: Text("Error Loading the Groups",style: TextStyle(color: Colors.red.shade400,fontSize: 17),),
                               )
                             : (homeStore.groupOperation.value == null &&
                                     homeStore.groupTiles == null)

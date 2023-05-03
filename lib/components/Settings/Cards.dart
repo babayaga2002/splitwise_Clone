@@ -6,7 +6,7 @@ import 'package:splitwise/Settings/editProfile.dart';
 import 'package:splitwise/Stores/loginStore.dart';
 
 class CardOne extends StatefulWidget {
-  const CardOne({Key? key}) : super(key: key);
+  const       CardOne({Key? key}) : super(key: key);
 
   @override
   State<CardOne> createState() => _CardOneState();

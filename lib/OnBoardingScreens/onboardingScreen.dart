@@ -250,7 +250,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
                                       context, HomePage.id);
                                 } else {
                                   Navigator.pushReplacementNamed(
-                                    context,
+                                     context,
                                     SignIn.id,
                                   );
                                 }

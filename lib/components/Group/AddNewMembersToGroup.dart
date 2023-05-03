@@ -99,11 +99,11 @@ class _AddNewMembersToGroupState extends State<AddNewMembersToGroup> {
                     version: QrVersions.auto,
                     size: 320,
                     gapless: false,
-                    embeddedImage: AssetImage(
-                        'assets/images/my_embedded_image.png'),
-                    embeddedImageStyle: QrEmbeddedImageStyle(
-                      size: Size(80, 80),
-                    ),
+                    // embeddedImage: AssetImage(
+                    //     'images/logo-background.png'),
+                    // embeddedImageStyle: QrEmbeddedImageStyle(
+                    //   size: Size(80, 80),
+                    // ),
                   ),
                   Text(widget.model!.title!),
                 ],

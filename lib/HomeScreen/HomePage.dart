@@ -7,7 +7,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:splitwise/HomeScreen/ActivityPage.dart';
 import 'package:splitwise/HomeScreen/FriendsPage.dart';
-import 'package:splitwise/HomeScreen/HomeTab.dart';
+import 'package:splitwise/HomeScreen/GroupPage.dart';
 import 'package:splitwise/Settings/settings.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:splitwise/Stores/homeStore.dart';

@@ -130,9 +130,9 @@ abstract class _HomeStore with Store {
       friendOperation =
           APIService.getFriendsData(loadOperation.value!.friends ?? [])
               .asObservable();
-      friendsNameToUid = ObservableMap.of(friendOperation.value ?? {});
     } else {
       if (friendOperation.value != null) {
+        friendsNameToUid = ObservableMap.of(friendOperation.value ?? {});
         friendOperation.value!.forEach((key, value) {
           a.add(FriendsTile(friendName: value, friendid: key));
         });

@@ -58,6 +58,7 @@ class APIService {
       }),
       headers: headers,
     );
+    print(res.body);
     if (res.statusCode == 200 || res.statusCode == 400) {
       return true;
     } else {
@@ -68,8 +69,6 @@ class APIService {
 
   static Future<bool> settleUp(
       String groupId, String payerId, String receiverId, num amount) async {
-    print(_addNewGroup + groupId + "/settle-up");
-    print([payerId, groupId, receiverId]);
     var res = await http.post(
       Uri.parse(_addNewGroup + groupId + "/settle-up"),
       body: jsonEncode({
